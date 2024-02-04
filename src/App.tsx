@@ -24,12 +24,18 @@ import SalesReport from "./Layer/reportt/SalesReport";
 import ExpenseBill from "./Layer/Expenses/ExpenseBill";
 import AddExpenses from "./Layer/Expenses/AddExpenses";
 import Transaction from "./Layer/Transcation/Transaction";
+import Login from "./components/auth/Login";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [],
+  },
+
+  {
+    path: "/login",
+    element: <Login />,
   },
 
   {
