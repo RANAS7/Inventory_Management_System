@@ -27,6 +27,11 @@ router.post("/addProduct", upload.single("productImg"), async (req, res) => {
       return res.status(400).json({ message: "File upload failed" });
     }
 
+    // images file upload should not be saved to db
+    // fileName,media-table
+
+    // MEDIA - prdoduct,category,
+
     const productName = req.body.productName;
     const images = req.file.filename;
 

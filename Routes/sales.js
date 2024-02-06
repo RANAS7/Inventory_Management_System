@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 router.post("/add-sales", async (req, res) => {
   try {
     let date;
+
     let total = req.body.quantity * req.body.price;
 
     if (req.body.date) {
@@ -70,3 +71,9 @@ router.post("/add-sales", async (req, res) => {
 });
 
 module.exports = router;
+
+const PAYMENT = {
+  ONLINE: "ONLINE",
+  CASH: "CASH",
+  BANK: "BANK",
+};

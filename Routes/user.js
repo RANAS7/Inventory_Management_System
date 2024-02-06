@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
+const { SignUpSchema } = require("../validations/user.validation");
+const validate = require("../middleware/validate");
 
 const prisma = new PrismaClient();
 
-router.post("/user", async (req, res) => {
+router.post("/user", validate(SignUpSchema), async (req, res) => {
   try {
     const hashPassword = await bcrypt.hash(req.body.password, 10);
     const userData = await prisma.user.create({
