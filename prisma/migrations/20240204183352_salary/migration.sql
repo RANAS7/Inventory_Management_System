@@ -1,0 +1,13 @@
+-- CreateTable
+CREATE TABLE `salary` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `Date` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `Amount` DECIMAL(10, 2) NULL,
+    `User_ID` INTEGER NULL,
+
+    INDEX `User_ID`(`User_ID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `salary` ADD CONSTRAINT `salary_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

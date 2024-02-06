@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id            Int             @id @default(autoincrement())
+  Name          String?         @db.VarChar(150)
+  Email         String?         @db.VarChar(150)
+  Role          String?         @db.VarChar(100)
+  Password      String?         @db.VarChar(100)
+  daily_exp     daily_exp[]
+  miscellaneous miscellaneous[]
+  notice        notice[]
+  salary        salary[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model salary {
+  id      Int       @id @default(autoincrement())
+  Date    DateTime? @default(now()) @db.DateTime(0)
+  Amount  Decimal?  @db.Decimal(10, 2)
+  User_ID Int?
+  user    user?     @relation(fields: [User_ID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "salary_ibfk_1")
+
+  @@index([User_ID], map: "User_ID")
+}
+
+model products {
+  id             Int              @id @default(autoincrement())
+  Product_Name   String?          @db.VarChar(150)
+  Images         String?          @db.Text
+  product_detail product_detail[]
+  sales          sales[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model daily_exp {
+  id           Int       @id @default(autoincrement())
+  date         DateTime? @default(now()) @db.DateTime(0)
+  created_by   Int?
+  amount       Decimal?  @db.Decimal(10, 2)
+  payment_type String?   @db.VarChar(50)
+  detail       String?   @db.Text
+  user         user?     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "daily_exp_ibfk_1")
+
+  @@index([created_by], map: "created_by")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model miscellaneous {
+  id           Int      @id @default(autoincrement())
+  created_by   Int?
+  amount       Decimal? @db.Decimal(10, 2)
+  payment_type String?  @db.VarChar(50)
+  detail       String?  @db.Text
+  user         user?    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "miscellaneous_ibfk_1")
+
+  @@index([created_by], map: "created_by")
+}
+
+model notice {
+  id      Int     @id @default(autoincrement())
+  title   String? @db.VarChar(200)
+  message String? @db.Text
+  user_id Int?
+  user    user?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notice_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model vendor {
+  id             Int              @id @default(autoincrement())
+  name           String?          @db.VarChar(150)
+  email          String?          @db.VarChar(150)
+  contact        String?          @db.VarChar(40)
+  contact_person String?          @db.VarChar(100)
+  product_detail product_detail[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model product_detail {
+  id         Int       @id @default(autoincrement())
+  vendor_id  Int?
+  product_id Int?
+  quantity   Int?
+  price      Decimal?  @db.Decimal(10, 2)
+  available  Int?
+  vendor     vendor?   @relation(fields: [vendor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_detail_ibfk_1")
+  products   products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_detail_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([vendor_id], map: "vendor_id")
+}
+
+model customer {
+  id      Int     @id @default(autoincrement())
+  name    String? @db.VarChar(150)
+  email   String? @db.VarChar(200)
+  contact String? @db.VarChar(50)
+  sales   sales[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model sales {
+  id           Int       @id @default(autoincrement())
+  date         DateTime? @default(now()) @db.DateTime(0)
+  customer_id  Int?
+  product_id   Int?
+  quantity     Int?
+  price        Decimal?  @db.Decimal(10, 2)
+  total        Decimal?  @db.Decimal(10, 2)
+  payment_type String?   @db.VarChar(100)
+  customer     customer? @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sales_ibfk_1")
+  products     products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sales_ibfk_2")
+
+  @@index([customer_id], map: "customer_id")
+  @@index([product_id], map: "product_id")
+}
