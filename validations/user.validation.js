@@ -9,9 +9,10 @@ const LoginSchema = z.object({
 
 const SignUpSchema = z.object({
   body: z.object({
-    Email: z.string().email(),
-    Name: z.string().min(2),
-    Password: z.string().min(2),
+    username: z.string().email(),
+    fullname: z.string().min(2),
+    usertype: z.string().min(2),
+    password: z.string().min(2),
   }),
 });
 

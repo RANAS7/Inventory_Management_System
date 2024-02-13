@@ -9,10 +9,10 @@ datasource db {
 
 model user {
   id            Int             @id @default(autoincrement())
-  Name          String?         @db.VarChar(150)
   Email         String?         @db.VarChar(150)
-  Role          String?         @db.VarChar(100)
+  Name          String?         @db.VarChar(150)
   Password      String?         @db.VarChar(100)
+  Role          String?         @db.VarChar(100)
   daily_exp     daily_exp[]
   miscellaneous miscellaneous[]
   notice        notice[]
@@ -98,11 +98,13 @@ model product_detail {
 }
 
 model customer {
-  id      Int     @id @default(autoincrement())
-  name    String? @db.VarChar(150)
-  email   String? @db.VarChar(200)
-  contact String? @db.VarChar(50)
-  sales   sales[]
+  id             Int     @id @default(autoincrement())
+  customer_name  String? @db.VarChar(150)
+  email          String? @unique(map: "email") @db.VarChar(150)
+  phone          String? @db.VarChar(20)
+  address        String? @db.VarChar(100)
+  contact_person String? @db.VarChar(100)
+  sales          sales[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.

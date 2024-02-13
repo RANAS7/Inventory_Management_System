@@ -4,7 +4,7 @@ const router = express.Router();
 
 const prisma = new PrismaClient();
 
-router.put("/update-expense", async (req, res) => {
+router.put("/update-user", async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, role } = req.body;

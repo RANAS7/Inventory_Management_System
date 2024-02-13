@@ -9,16 +9,18 @@ const prisma = new PrismaClient();
 
 router.post("/user", validate(SignUpSchema), async (req, res) => {
   try {
-    const hashPassword = await bcrypt.hash(req.body.password, 10);
+    const { password, fullname, username, usertype } = req.body;
+    const hashPassword = await bcrypt.hash(password, 10);
     const userData = await prisma.user.create({
       data: {
-        Name: req.body.name,
-        Email: req.body.email,
-        Role: req.body.role,
+        Name: fullname,
+        Email: username,
+        Role: usertype,
         Password: hashPassword,
       },
     });
-    res.json(userData);
+    // res.json(userData);
+    res.status(200).json({ message: "user created", data: userData });
     console.log("User data successfully submitted", userData);
   } catch (err) {
     console.error("Error inserting user with Prisma", err);

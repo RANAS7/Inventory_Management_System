@@ -1,10 +1,13 @@
 -- CreateTable
 CREATE TABLE `customer` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(150) NULL,
-    `email` VARCHAR(200) NULL,
-    `contact` VARCHAR(50) NULL,
+    `customer_name` VARCHAR(150) NULL,
+    `email` VARCHAR(150) NULL,
+    `phone` VARCHAR(20) NULL,
+    `address` VARCHAR(100) NULL,
+    `contact_person` VARCHAR(100) NULL,
 
+    UNIQUE INDEX `email`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
