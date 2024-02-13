@@ -14,6 +14,8 @@ const sales = require("./Routes/sales");
 const customer = require("./Routes/custmer");
 const duser = require("./Routes/delete/duser");
 const update_u = require("./Routes/update/update_user");
+const getCustomers = require("./Routes/get/getCustomers");
+const getVendors = require("./Routes/get/getVendor");
 
 const app = express();
 app.use(express.json());
@@ -32,6 +34,8 @@ app.use(sales);
 app.use(customer);
 app.use(duser);
 app.use(update_u);
+app.use(getCustomers);
+app.use(getVendors);
 
 const PORT = 8080;
 app.listen(PORT, () => {

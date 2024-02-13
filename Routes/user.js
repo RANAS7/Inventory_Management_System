@@ -13,7 +13,7 @@ router.post("/user", validate(SignUpSchema), async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 10);
     const userData = await prisma.user.create({
       data: {
-        Name: fullname,
+        name: fullname,
         Email: username,
         Role: usertype,
         Password: hashPassword,

@@ -7,14 +7,15 @@ const prisma = new PrismaClient();
 
 // Endpoint for handling deletion
 router.delete("/delete-user", async (req, res) => {
+  const { id } = req.params;
   try {
     // Assuming you have a 'Expense' model in your Prisma schema
     const deletedUser = await prisma.user.delete({
       where: {
-        id: parseInt(req.params.id),
+        id: parseInt(id),
       },
     });
-
+    console.log("User successfully deleted");
     res
       .status(200)
       .json({ message: "Expense deleted successfully", deletedUser });
