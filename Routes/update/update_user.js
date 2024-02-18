@@ -4,23 +4,22 @@ const router = express.Router();
 
 const prisma = new PrismaClient();
 
-router.put("/update-user", async (req, res) => {
+router.put("/update-user/:editId", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, email, role } = req.body;
+    const { editId } = req.params;
+    const { name, Email, Role } = req.body;
 
     const updatedUser = await prisma.user.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(editId) },
       data: {
-        Name: name,
-        Email: email,
-        Role: role,
+        name: name,
+        Email: Email,
+        Role: Role,
       },
     });
 
-    res
-      .status(200)
-      .json({ message: "Expense updated successfully", updatedUser });
+    res.status(200).json({ message: "User updated successfully", updatedUser });
+    console.log("User updated successfully");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
