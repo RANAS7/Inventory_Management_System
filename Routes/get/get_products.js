@@ -6,16 +6,36 @@ const prisma = new PrismaClient();
 
 router.get("/get-products", async (req, res) => {
   try {
-    const allData = await prisma.products.findMany(); // Replace 'yourModel' with your actual model name
-    res.json({ success: true, data: allData, message: "fetched user " });
-  } catch (error) {
-    console.error("Error fetching all data", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching all data",
-      error: error.message,
+    const productsWithDetails = await prisma.products.findMany({
+      select: {
+        Product_Name: true,
+        Images: true,
+        product_detail: {
+          select: {
+            quantity: true,
+            price: true,
+            available: true,
+            vendor: {
+              select: {
+                name: true,
+                email: true,
+                contact: true,
+                contact_person: true,
+              },
+            },
+          },
+        },
+      },
     });
-    console.log(allData);
+
+    console.log("Products with details:", productsWithDetails);
+
+    res.json(productsWithDetails);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    await prisma.$disconnect();
   }
 });
 
