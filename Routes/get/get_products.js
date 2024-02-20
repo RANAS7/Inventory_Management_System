@@ -8,6 +8,7 @@ router.get("/get-products", async (req, res) => {
   try {
     const productsWithDetails = await prisma.products.findMany({
       select: {
+        id: true,
         Product_Name: true,
         Images: true,
         product_detail: {
