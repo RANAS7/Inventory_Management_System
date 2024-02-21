@@ -23,6 +23,7 @@ const getMiscellaneous = require("./Routes/get/get_miscellaneous");
 const getSales = require("./Routes/get/get_sales");
 const dCustomer = require("./Routes/delete/d_customer");
 const dSales = require("./Routes/delete/d_sales");
+const getNotice = require("./Routes/get/get_notice");
 
 const app = express();
 app.use(express.json());
@@ -50,6 +51,7 @@ app.use(getMiscellaneous);
 app.use(getSales);
 app.use(dCustomer);
 app.use(dSales);
+app.use(getNotice);
 
 const PORT = 8080;
 app.listen(PORT, () => {

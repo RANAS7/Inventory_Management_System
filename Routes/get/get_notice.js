@@ -4,13 +4,13 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-router.get("/get-salary", async (req, res) => {
+router.get("/get-notice", async (req, res) => {
   try {
-    const allData = await prisma.salary.findMany();
+    const allData = await prisma.notice.findMany();
     res.json({
       success: true,
       data: allData,
-      message: "fetched salary datas ",
+      message: "fetched notice data ",
     });
   } catch (error) {
     console.error("Error fetching all data", error);
