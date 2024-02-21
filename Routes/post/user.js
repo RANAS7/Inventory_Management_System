@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
-const { SignUpSchema } = require("../validations/user.validation");
-const validate = require("../middleware/validate");
+const { SignUpSchema } = require("../../validations/user.validation");
+const validate = require("../../middleware/validate");
 
 const prisma = new PrismaClient();
 

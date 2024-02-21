@@ -1,22 +1,26 @@
 const express = require("express");
 const cors = require("cors");
-const user = require("./Routes/user");
-const login = require("./Routes/login");
-const createProduct = require("./Routes/create_product");
+const user = require("./Routes/post/user");
+const login = require("./Routes/post/login");
+const createProduct = require("./Routes/post/create_product");
 const getUser = require("./Routes/get/getUser");
-const salary = require("./Routes/salary");
-const productDetails = require("./Routes/productdetail");
+const salary = require("./Routes/post/salary");
+const productDetails = require("./Routes/post/productdetail");
 const getProduct = require("./Routes/get/get_products");
-const exp = require("./Routes/exp");
-const notice = require("./Routes/notice");
-const vendor = require("./Routes/vendor");
-const sales = require("./Routes/sales");
-const customer = require("./Routes/custmer");
+const exp = require("./Routes/post/exp");
+const notice = require("./Routes/post/notice");
+const vendor = require("./Routes/post/vendor");
+const sales = require("./Routes/post/sales");
+const customer = require("./Routes/post/custmer");
 const duser = require("./Routes/delete/duser");
 const update_u = require("./Routes/update/update_user");
 const getCustomers = require("./Routes/get/getCustomers");
 const getVendors = require("./Routes/get/getVendor");
 const dproduct = require("./Routes/delete/dproduct");
+const getSalary = require("./Routes/get/get_salary");
+const getExp = require("./Routes/get/get_exp");
+const getMiscellaneous = require("./Routes/get/get_miscellaneous");
+const getSales = require("./Routes/get/get_sales");
 
 const app = express();
 app.use(express.json());
@@ -38,6 +42,10 @@ app.use(update_u);
 app.use(getCustomers);
 app.use(getVendors);
 app.use(dproduct);
+app.use(getSalary);
+app.use(getExp);
+app.use(getMiscellaneous);
+app.use(getSales);
 
 const PORT = 8080;
 app.listen(PORT, () => {
