@@ -21,6 +21,8 @@ const getSalary = require("./Routes/get/get_salary");
 const getExp = require("./Routes/get/get_exp");
 const getMiscellaneous = require("./Routes/get/get_miscellaneous");
 const getSales = require("./Routes/get/get_sales");
+const dCustomer = require("./Routes/delete/d_customer");
+const dSales = require("./Routes/delete/d_sales");
 
 const app = express();
 app.use(express.json());
@@ -46,6 +48,8 @@ app.use(getSalary);
 app.use(getExp);
 app.use(getMiscellaneous);
 app.use(getSales);
+app.use(dCustomer);
+app.use(dSales);
 
 const PORT = 8080;
 app.listen(PORT, () => {
