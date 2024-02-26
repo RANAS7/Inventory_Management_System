@@ -73,6 +73,7 @@ CREATE TABLE `vendor` (
     `email` VARCHAR(150) NULL,
     `contact` VARCHAR(40) NULL,
     `contact_person` VARCHAR(100) NULL,
+    `address` VARCHAR(100) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

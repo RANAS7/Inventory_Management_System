@@ -8,10 +8,11 @@ router.post("/add-vendor", async (req, res) => {
   try {
     const vendorData = await prisma.vendor.create({
       data: {
-        name: req.body.name,
+        name: req.body.supplier,
         email: req.body.email,
-        contact: req.body.contact,
-        contact_person: req.body.contact_person,
+        contact: req.body.phone,
+        contact_person: req.body.contactPerson,
+        address: req.body.address,
       },
     });
     res.json(vendorData);

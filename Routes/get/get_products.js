@@ -13,6 +13,7 @@ router.get("/get-products", async (req, res) => {
         Images: true,
         product_detail: {
           select: {
+            id: true,
             quantity: true,
             price: true,
             available: true,

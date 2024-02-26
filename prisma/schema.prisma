@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -80,6 +80,7 @@ model vendor {
   email          String?          @db.VarChar(150)
   contact        String?          @db.VarChar(40)
   contact_person String?          @db.VarChar(100)
+  address        String?          @db.VarChar(100)
   product_detail product_detail[]
 }
 
