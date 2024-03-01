@@ -24,6 +24,9 @@ const getSales = require("./Routes/get/get_sales");
 const dCustomer = require("./Routes/delete/d_customer");
 const dSales = require("./Routes/delete/d_sales");
 const getNotice = require("./Routes/get/get_notice");
+const dVendor = require("./Routes/delete/d_vendor");
+const dExp = require("./Routes/delete/d_exp");
+const update_exp = require("./Routes/update/update_exp");
 
 const app = express();
 app.use(express.json());
@@ -52,6 +55,9 @@ app.use(getSales);
 app.use(dCustomer);
 app.use(dSales);
 app.use(getNotice);
+app.use(dVendor);
+app.use(dExp);
+app.use(update_exp);
 
 const PORT = 8080;
 app.listen(PORT, () => {
