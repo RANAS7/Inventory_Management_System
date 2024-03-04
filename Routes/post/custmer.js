@@ -15,9 +15,9 @@ router.post("/add-customer", async (req, res) => {
     // Create a new customer
     const customerData = await prisma.customer.create({
       data: {
-        customer_name: customer,
+        name: customer,
         email: email,
-        phone: phone,
+        contact: phone,
         address: address,
         contact_person: contactPerson,
       },
