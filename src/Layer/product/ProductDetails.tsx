@@ -29,7 +29,7 @@ const ProductDetails: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h2>{productName}</h2>
       <div>
         <label>Product Name: </label>

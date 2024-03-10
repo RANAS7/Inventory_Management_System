@@ -48,7 +48,7 @@ const router = createBrowserRouter([
         // Dashboard Content
       },
       {
-        path: "/dashboard/transaction",
+        path: "transaction",
         element: <Transaction />,
         // Dashboard Content
       },

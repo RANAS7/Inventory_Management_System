@@ -1,7 +1,6 @@
 // Layout.js
+import Login from "@/components/auth/Login";
 import { ReactNode } from "react";
-import { Outlet } from "react-router-dom";
-
 interface LayoutProps {
   children: ReactNode;
 }
@@ -9,18 +8,7 @@ interface LayoutProps {
 const Layout = () => {
   return (
     <div>
-      <header>
-        {/* Header content */}
-        <h1>Header content</h1>
-      </header>
-      <main>
-        {/* Main content */}
-        {<Outlet />}
-      </main>
-      <footer>
-        {/* Footer content */}
-        <p>&copy; 2024 inventory management</p>
-      </footer>
+      <Login/>
     </div>
   );
 };

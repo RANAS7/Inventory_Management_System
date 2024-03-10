@@ -1,86 +1,102 @@
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import axiosInstance from "@/lib/api";
 
 const AddStaff: React.FC = () => {
-  const [supplier, setSupplier] = useState<string>("");
-  const [contactPerson, setContactPerson] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
+  interface IForm {
+    username: string;
+    fullname: string;
+    password: string;
+    usertype: string;
+  }
+  // // Define the data interface (optional but recommended)
+  // interface PostData {
+  //   key1: string;
+  //   key2: string;
+  // }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you can handle form submission, like sending data to a server or updating state
-    console.log({
-      supplier,
-      contactPerson,
-      email,
-      phone,
-      address,
-    });
-    // Reset the form fields after submission
-    setSupplier("");
-    setContactPerson("");
-    setEmail("");
-    setPhone("");
-    setAddress("");
+  const { register, handleSubmit } = useForm<IForm>({
+    defaultValues: {
+      username: "",
+      fullname: "",
+      password: "",
+      usertype: "",
+    },
+  });
+
+  const createUser = async (data: IForm) => {
+    const response = await axiosInstance.post("/user", data);
+    return response.data;
+  };
+  const onSubmit = async (data: IForm) => {
+    console.log("🚀 ~ onSubmit ~ data:", data);
+    await createUser(data);
+    alert("User created successfully");
+    console.log("User created successfully");
   };
 
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Add Staff Information</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       / Add Staff information
       <div>
-        <hr
-          className="w-[1250px]  mt-10 mx-4
-           bg-red-600 h-[3px]"
-        />
+        <hr className="md:w-[1250px] mt-10 mx-4 bg-red-600 h-[3px]" />
       </div>
-      <div className=" mt-8 p-6  bg-gray- rounded-lg shadow-md">
-        <form onSubmit={handleSubmit}>
+      <div className="mt-8 p-6 bg-gray- rounded-lg shadow-md">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="bg-white w-[100%] h-auto">
             <div>
               <div className="flex mx-auto">
-                <div className="w-[80%]">
-                  <div className="flex gap-16 mt-4">
-                    <h1 className="ml-4">User Name:</h1>
+                <div className="md:w-[80%] w-[100%]">
+                  <div className="flex  md:gap-0 gap-10 mt-4">
+                    <h1 className="md:ml-4 w-32">username:</h1>
                     <Input
-                      type="text"
+                      type="username"
                       placeholder="user name"
-                      className="w-80"
+                      className="md:w-80"
+                      {...register("username")}
                     />
                   </div>
-                  <div className="flex gap-16 mt-4">
-                    <h1 className="ml-4">Full Name:</h1>
-                    <Input type="text" placeholder="name" className="w-80" />
-                  </div>
-                  <div className="flex gap-16 mt-4">
-                    <h1 className="ml-4">password:</h1>
+                  <div className="flex md:gap-0 gap-0 mt-4">
+                    <h1 className="md:ml-4 w-32">Full Name:</h1>
                     <Input
                       type="text"
+                      placeholder="name"
+                      className="w-80"
+                      {...register("fullname")}
+                    />
+                  </div>
+                  <div className="flex  md:gap-16 gap-10  mt-4">
+                    <h1 className="ml-4">Password:</h1>
+                    <Input
+                      type="password"
                       placeholder="password"
                       className="w-80"
+                      {...register("password")}
                     />
                   </div>
-                  <div className="flex gap-16 mt-4">
-                    <h1 className="ml-4">User Type </h1>
+                  <div className="flex  md:gap-16 gap-10  mt-4">
+                    <h1 className="ml-4">User Type</h1>
                     <Input
                       type="text"
                       placeholder="user type"
                       className="w-80"
+                      {...register("usertype")}
                     />
                   </div>
                 </div>
               </div>
               <Button
                 type="submit"
-                className="ml-52 mt-10 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="md:ml-52 ml-36 mt-10 w-24 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
-                Add Staff
+                Save
               </Button>
             </div>
           </div>

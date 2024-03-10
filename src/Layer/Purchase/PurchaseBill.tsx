@@ -1,234 +1,224 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import axiosInstance from "@/lib/api";
 
-interface Item {
+interface Product {
+  sn: number;
   name: string;
-  availableQty: number;
   quantity: number;
   rate: number;
-  discount: number;
   total: number;
 }
 
+interface Vendor {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  contact_person: string;
+  address: string;
+}
+
 const PurchaseBill: React.FC = () => {
-  const [items, setItems] = useState<Item[]>([]);
-  const [newItem, setNewItem] = useState<Item>({
-    name: "",
-    availableQty: 0,
-    quantity: 0,
-    rate: 0,
-    discount: 0,
-    total: 0,
-  });
-  //   const [totalDiscount, setTotalDiscount] = useState<number>(0);
-  const [grandTotal, setGrandTotal] = useState<number>(0);
+  const [products, setProducts] = useState<Product[]>([]);
   const [paidAmount, setPaidAmount] = useState<number>(0);
-  const [totalDue, setTotalDue] = useState<number>(0);
+   const [vendors, setVendors] = useState<Vendor[]>([]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: keyof Item
-  ) => {
-    setNewItem({ ...newItem, [key]: e.target.value });
-  };
+  useEffect(() => {
+    // Initialize with one default product row
+    addProduct();
+  }, []); // Empty dependency array ensures this effect runs only once after initial render
 
-  const handleAddItem = () => {
-    setItems([...items, newItem]);
-    setNewItem({
+  const addProduct = () => {
+    const newProduct: Product = {
+      sn: products.length + 1,
       name: "",
-      availableQty: 0,
       quantity: 0,
       rate: 0,
-      discount: 0,
       total: 0,
-    });
+    };
+    setProducts([...products, newProduct]);
+  };
+  // get supplier
+  useEffect(() => {
+    axiosInstance
+      .get("http://localhost:8080/get-vendors")
+      .then((res) => {
+        setVendors(res.data.data);
+        console.log("Vendors are successfully fetched", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []); 
+
+  const handleInputChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+    const newProducts = [...products];
+    newProducts[index] = {
+      ...newProducts[index],
+      [name]: value,
+    };
+    newProducts[index].total =
+      newProducts[index].quantity * newProducts[index].rate;
+    setProducts(newProducts);
   };
 
-  React.useEffect(() => {
-    let totalDiscount = 0;
-    let grandTotal = 0;
+  const deleteProduct = (index: number) => {
+    const newProducts = [...products];
+    newProducts.splice(index, 1);
+    setProducts(newProducts);
+  };
 
-    items.forEach((item) => {
-      const itemTotal = item.quantity * item.rate - item.discount;
-      grandTotal += itemTotal;
-      totalDiscount += item.discount;
-    });
+  const calculateGrandTotal = () => {
+    return products.reduce((acc, curr) => acc + curr.total, 0);
+  };
 
-    const totalDue = grandTotal - paidAmount;
-    // setTotalDiscount(totalDiscount);
-    setGrandTotal(grandTotal);
-    setTotalDue(totalDue);
-  }, [items, paidAmount]);
-  const [supplier, setSupplier] = useState<string>("");
+  const calculateDue = () => {
+    return calculateGrandTotal() - paidAmount;
+  };
+
+  const handleSave = () => {
+    // Add your save logic here
+    console.log("Saving data:", products);
+    console.log("Paid amount:", paidAmount);
+  };
+  interface IForm {
+    supplierName: string;
+    date: Number;
+  }
+  const { register, handleSubmit } = useForm<IForm>({
+    defaultValues: {
+      supplierName: "",
+      date: "",
+    },
+  });
 
   return (
-    <div className="bg-violet-200 h-screen">
-      <h1 className="text-xl mt-4 ml-10">Purchase bill</h1>
-      <a className="ml-8 text-blue-500" href="#">
+    <div className="md:h-[100vh] flex-col mx-auto">
+      <h1 className="text-xl mt-4 ml-10">Add Purchase Bill</h1>
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
-      / Purchase Bill
-      <div className="bg-white shadow-2xl">
-        <div className="here">
-          <div className="flex gap-10 mb-4">
-            <label
-              className="block   text-gray-700 font-bold mt-10"
-              htmlFor="email"
-            >
-              Supplier Name*
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value)}
-              className="form-input mt-10 py-2 border w-96 "
-            />
-          </div>
-          <div className="flex gap-40 mt-4">
-            <div className="">
-              <div className="flex gap-10  mb-4">
-                <label
-                  className="block text-gray-700 font-bold mb-2 ml-10"
-                  htmlFor="email"
-                >
-                  Date*
-                </label>
-                <input
-                  type="date"
-                  id="email"
-                  value={supplier}
-                  onChange={(e) => setSupplier(e.target.value)}
-                  className="form-input w-96 py-2 border"
-                />
-              </div>
-            </div>
-            <div className="relative">
-              <Button>New Supplier</Button>
-            </div>
-          </div>
-        </div>
+      </Link>
+      / Add Purchase Bill
+      <div>
+        <hr className="md:w-[1250px] mt-10 mx-4 bg-red-600 h-[3px]" />
+      </div>
+      <div className="flex ml-6 mt-3">
+                    <label className="gap-8 flex mt-1 ">
+                      Supplier Name:
+                      <select
+                        className="ml- w- py-2 w-80 rounded border border-l-amber-500"
+                        {...register("supplierName")}
+                      >
+                         <option value="choose Option">choose option </option>
+                        {vendors.map((vendor)=>(
+                          <option value="Salary">{vendor.name}</option>
+                        ))}
+                        
 
-        <div>
-          <hr
-            className="w-[1250px]  mb-8 mx-4
-           bg-red-600 h-[3px]"
-          />
-        </div>
-
-        <table className="border w-96 py-2 mr-2">
-          <thead className="gap-96">
-            <tr className=" text-sm">
-              <th className="">Product Name</th>
-
-              <th className="pl-32">Quantity</th>
-              <th className=" pl-32">Rate</th>
-
-              <th className=" pl-40">Total</th>
-              <th className="pl-24">Action</th>
+                      </select>
+                    </label>
+                  </div>
+      <div className="flex  md:gap-5 gap-10 mt-4 mb-10">
+        <h1 className="md:ml-4 w-32">Date:</h1>
+        <Input
+          type="date"
+          placeholder="date"
+          className="md:w-80"
+          {...register("date")}
+        />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="table-auto w-full">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">SN</th>
+              <th className="px-4 py-2">Product Name</th>
+              <th className="px-4 py-2">Quantity</th>
+              <th className="px-4 py-2">Rate</th>
+              <th className="px-4 py-2">Total</th>
+              <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item, index) => (
+            {products.map((product, index) => (
               <tr key={index}>
-                <td className="border  ">{item.name}</td>
-
-                <td className="border  ">{item.quantity}</td>
-                <td className="border  ">{item.rate}</td>
-                <td className="border  ">
-                  {item.quantity * item.rate - item.discount}
+                <td className="border px-4 py-2">{product.sn}</td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="text"
+                    name="name"
+                    value={product.name}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
                 </td>
-                <td className="border  ">{item.total}</td>
-                <td className="border  ">Delete</td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={product.quantity}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    name="rate"
+                    value={product.rate}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">{product.total}</td>
+                <td className="border px-4 py-2">
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                    onClick={() => deleteProduct(index)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        <div className="mt-4">
-          <input
-            type="text"
-            placeholder="Item Information"
-            value={newItem.name}
-            onChange={(e) => handleChange(e, "name")}
-            className="border px-4 py-2 mr-2 "
-          />
-          {/* <input
-            type="number"
-            placeholder="Available Qty"
-            value={newItem.availableQty}
-            onChange={(e) => handleChange(e, "availableQty")}
-            className="border py-2 mr-2"
-          /> */}
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={newItem.quantity}
-            onChange={(e) => handleChange(e, "quantity")}
-            className="border  py-2 mr-2"
-          />
-          <input
-            type="number"
-            placeholder="Rate"
-            value={newItem.rate}
-            onChange={(e) => handleChange(e, "rate")}
-            className="border py-2 mr-2"
-          />
-          {/* <input
-            type="number"
-            placeholder="Discount"
-            value={newItem.discount}
-            onChange={(e) => handleChange(e, "discount")}
-            className="border py-2 mr-2"
-          /> */}
-          <input
-            type="number"
-            placeholder="total"
-            value={newItem.total}
-            onChange={(e) => handleChange(e, "total")}
-            className="border px-4 py-2 mr-2"
-          />
-          <button onClick={handleAddItem} className="">
-            Add Item
-          </button>
-        </div>
-        <div className="mt-4  ml-[900px] ">
-          {/* <div className=" top-0 right-0">
-            <label>Total Discount: </label>
-            <span>{totalDiscount}</span>
-          </div> */}
-          <div>
-            <label>Grand Total: </label>
-            <span>{grandTotal}</span>
-          </div>
-          <div>
-            <label>Paid Amount: </label>
+      </div>
+      <div className="mt-4 flex justify-between">
+        <Button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
+          onClick={addProduct}
+        >
+          Add Item
+        </Button>
+        <div className="mr-8">
+          <p>Grand Total: {calculateGrandTotal()}</p>
+          <p>
+            Paid Amount:
             <input
               type="number"
               value={paidAmount}
-              onChange={(e) => setPaidAmount(parseFloat(e.target.value))}
-              className="border px-4 py-2 mr-2"
+              onChange={(e) => setPaidAmount(parseInt(e.target.value))}
+              className="ml-2"
             />
-          </div>
-          <div className="flex gap-2 text-center">
-            <label className="text-center mt-2">Payment Type: </label>
-            <select
-              name="selectedFruit"
-              className=" w-52 text-center py-1 mt-2 rounded border border-l-amber-500"
-            >
-              <option value="apple">choose Payment Method</option>
-              <option value="apple">Cash</option>
-              <option value="banana">Bank</option>
-              <option value="orange">Cheaque</option>
-            </select>
-          </div>
-          <div className="pb-10">
-            <label>Total Due: </label>
-            <span>{totalDue}</span>
-          </div>
+          </p>
+          <p>Due: {calculateDue()}</p>
         </div>
-        <Button className="ml-96 mb-4 w-24">save</Button>
       </div>
+      <Button
+        className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4"
+        onClick={handleSave}
+      >
+        Save
+      </Button>
     </div>
   );
 };

@@ -7,12 +7,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const invoices = [
   {
     sn: "1",
     date: "2081-02-15",
     createdby: "Accountant",
+    name: "ABC",
     amount: "Rs 10000",
     expensetype: "salary",
     paymenttype: "cash",
@@ -31,15 +33,15 @@ const invoices = [
 
 export function ExpenseBill() {
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Expense Bill List</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       /Expense List
       <div>
         <Input
-          className="w-96 ml-[850px] mb-10"
+          className="md:w-96 md:ml-[850px] md:mb-10 w-72 ml-28 mb-2 mt-4"
           type="text"
           placeholder="search"
         />
@@ -50,6 +52,7 @@ export function ExpenseBill() {
             <TableHead>S.N</TableHead>
             <TableHead className="text-center">Date</TableHead>
             <TableHead className="text-center">created By</TableHead>
+            <TableHead className="text-center">Name</TableHead>
             <TableHead className="text-center">Amount</TableHead>
             <TableHead className="text-center">Expense Type</TableHead>
             <TableHead className="text-center">Payment Type</TableHead>
@@ -63,6 +66,7 @@ export function ExpenseBill() {
               <TableCell className="font-medium">{invoice.sn}</TableCell>
               <TableCell className="text-center">{invoice.date}</TableCell>
               <TableCell className="text-center">{invoice.createdby}</TableCell>
+              <TableCell className="text-center">{invoice.name}</TableCell>
 
               <TableCell className="text-center">{invoice.amount}</TableCell>
               <TableCell className="text-center">

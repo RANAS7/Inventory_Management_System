@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie } from "recharts";
-import { FaUser } from "react-icons/fa";
-
+import { MdOutlineAttachMoney } from "react-icons/md";
+import { FaUsers } from "react-icons/fa";
 const data01 = [
   { name: "Group A", value: 400 },
   { name: "Group B", value: 300 },
@@ -30,6 +30,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { Link } from "react-router-dom";
 
 const data = [
   {
@@ -73,60 +74,95 @@ const Dashboard = () => {
   return (
     <>
       <div className="bg-sky- w-[100%]">
-        <div className="md:flex gap-1 content-center">
-          <div className="text-center  bg--500 mt-1  w-[25%]  justify-center items-center shadow-lg rounded h-20">
-            <h1 className="font-semibold">Cash Amount</h1>
-            <p className="font-bold text-2xl"> RS 2521531351</p>
+        <div className="md:flex  gap-1 content-center">
+          <div className=" flex text-center  bg--500 mt-1  md:w-[25%] w-[100%]  justify-center items-center shadow-lg rounded h-20">
+            <div>
+              {" "}
+              <span className="text-5xl text-indigo-600">
+                <MdOutlineAttachMoney />
+              </span>
+            </div>
+            <div className="">
+              <h1 className="font-semibold">Cash Amount</h1>
+              <p className="font-bold text-2xl text-green-600">
+                {" "}
+                RS 2521531351
+              </p>
+            </div>
           </div>
-          <div className="text-center  bg--500 mt-1  w-[25%]  justify-center items-center shadow-lg rounded h-20">
-            <h1 className="font-semibold">Bank Amount</h1>
-            <p className="font-bold text-2xl">RS 2521531351</p>
+          <div className=" flex text-center  bg--500 mt-1  md:w-[25%] w-[100%]  justify-center items-center shadow-lg rounded h-20">
+            <div>
+              {" "}
+              <span className="text-5xl text-indigo-600">
+                <MdOutlineAttachMoney />
+              </span>
+            </div>
+            <div>
+              <h1 className="font-semibold">Bank Account</h1>
+              <p className="font-bold text-2xl text-green-600">
+                {" "}
+                RS 2521531351
+              </p>
+            </div>
           </div>
-          <div className="text-center  bg--500 mt-1  w-[25%]  justify-center items-center shadow-lg rounded h-20">
-            <h1 className="font-semibold">Cheque Amount</h1>
-            <p className="font-bold text-2xl">RS 2521531351</p>
+          <div className="flex text-center  bg--500 mt-1  md:w-[25%] w-[100%]  justify-center items-center shadow-lg rounded h-20">
+            <div>
+              {" "}
+              <span className="text-5xl text-indigo-600">
+                <MdOutlineAttachMoney />
+              </span>
+            </div>
+            <div>
+              <h1 className="font-semibold">Cash Amount</h1>
+              <p className="font-bold text-2xl text-red-500"> RS 2521531351</p>
+            </div>
           </div>
-          <div className="flex bg--400 mt-1  w-[25%]  justify-center items-center shadow-lg  rounded h-20 ">
-            <Button className="  "> Create Transaction</Button>
+          <div className="flex mt-1  md:w-[25%]  md:justify-center content-center items-center shadow-lg  rounded h-20 ">
+            <Link to="transaction">
+              {" "}
+              <Button className="ml-64 md:ml-0  "> Create Transaction</Button>
+            </Link>
           </div>
         </div>
-        <div className="flex mt-10 gap-16 ml-10 content-center">
-          <div className="flex bg-white mt-1  w-[20%]  justify-center items-center shadow-lg  rounded h-20">
-            <Button>Create Purchase</Button>
+        <div className="md:flex mt-10 gap-6 ml-10 content-center">
+          <div className=" bg-white mt-1 md:w-[40%] w-[100%]  justify-center items-center shadow-lg  rounded h-80">
+            <h1 className="text-center text-2xl font-semibold">
+              Recent purchase
+            </h1>
           </div>
-          <div className="flex bg--500 mt-1  w-[20%]  justify-center items-center shadow-lg  rounded h-20">
-            <Button>Create Sale</Button>
+          <div className=" bg-white mt-1 md:w-[40%] w-[100%]  justify-center items-center shadow-lg  rounded h-80">
+            <h1 className="text-center font-semibold text-2xl">Recent sale</h1>
           </div>
-          <div className=" gap-4 bg-white mt-1 w-[20%] font-semibold text-2xl justify-center items-center shadow-lg  rounded h-auto">
-            <div className="flex gap-4 justify-center">
-              <span>
-                <FaUser />
-              </span>
-              <h1> Total Customer</h1>
+          <div className=" text-center  md:mt-1 mt-6 ml-0  md:w-[20%]  justify-center items-center shadow-lg  rounded md:h-80 h-56">
+            <div className="text-center justify-center items-center ml-4   ">
+              <div className="flex   gap-4 text-2xl font-semibold text-blue-600 py-2 md:ml-0 ml-48">
+                <span>
+                  {" "}
+                  <FaUsers className="md:text-center text-2xl " />
+                </span>
+                <h1 className="md:text-zinc-400  ">Total Supplier</h1>
+              </div>
+              <span className="text-3xl text-black font-semibold">100</span>
             </div>
-            <p className="text-3xl text-center">550</p>
-          </div>
-          <div className=" gap-4 bg-white mt-1 w-[20%] font-semibold text-2xl justify-center items-center shadow-lg  rounded h-auto">
-            <div className="flex gap-4 justify-center">
-              <span>
-                <FaUser />
-              </span>
-              <h1> Total Supplier</h1>
+            <div>
+              <div className="text-center justify-center items-center ml-4  ">
+                <div className="flex gap-4 text-2xl font-semibold text-blue-600 py-2 mt-7 md:ml-0 ml-48 ">
+                  <span>
+                    {" "}
+                    <FaUsers className="md:text-center text-2xl" />
+                  </span>
+                  <h1 className="md:text-zinc-400">Total Customer</h1>
+                </div>
+                <span className="md:text-3xl text-black font-semibold">
+                  100
+                </span>
+              </div>
             </div>
-            <p className="text-3xl text-center">50</p>
-          </div>
-        </div>
-        <div className="flex mt-10 gap-4 ml-10 content-center">
-          <div className=" bg-white mt-1 w-[48%]  justify-center items-center shadow-lg  rounded h-80">
-            <Button>Recent Purchase</Button>
-          </div>
-          <div className=" bg--500 mt-1  w-[48%]  justify-center items-center shadow-lg  rounded h-80">
-            <Button>Recent Sale</Button>
           </div>
         </div>
 
-        <div className="flex mt-10 gap-4 ml-2 content-center">
-          <div className="flex bg--500 mt-1  w-[35%]  justify-center items-center shadow-lg  rounded h-96">
+        <div className="md:flex mt-10 gap-4 ml-2 content-center">
+          <div className="flex  mt-1  md:w-[35%]  justify-center items-center shadow-lg  rounded h-96">
             <PieChart width={400} height={400}>
               <Pie
                 data={data01}
@@ -148,7 +184,7 @@ const Dashboard = () => {
               />
             </PieChart>
           </div>
-          <div className=" bg-white mt-1  w-[63%] text  justify-center items-center shadow-lg rounded h-96">
+          <div className=" bg-white mt-1 md:w-[63%] w-[100%] text  justify-center items-center shadow-lg rounded h-96">
             <h1 className="text-center text-3xl font-semibold">
               {" "}
               Differences{" "}

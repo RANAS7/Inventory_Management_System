@@ -1,236 +1,285 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import axiosInstance from "@/lib/api";
 
-interface Item {
+interface Product {
+  sn: number;
   name: string;
-  availableQty: number;
   quantity: number;
   rate: number;
-  discount: number;
   total: number;
+  availableQuantity: number;
+  discount: number;
+  paymentType: string; // Payment Type: Cash, Bank Account, Cheque
+}
+interface Customer {
+  id: number;
+  contact_person: string;
+  name: string;
+  email: string;
+  Contact: string;
+  address: string;
+  Option: string;
 }
 
-const Table: React.FC = () => {
-  const [items, setItems] = useState<Item[]>([]);
-  const [newItem, setNewItem] = useState<Item>({
-    name: "",
-    availableQty: 0,
-    quantity: 0,
-    rate: 0,
-    discount: 0,
-    total: 0,
-  });
-  const [totalDiscount, setTotalDiscount] = useState<number>(0);
-  const [grandTotal, setGrandTotal] = useState<number>(0);
+const AddBill: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [paidAmount, setPaidAmount] = useState<number>(0);
-  const [totalDue, setTotalDue] = useState<number>(0);
+  const [paymentType, setPaymentType] = useState<string>(""); // State for Payment Type
+  const [customers, setCustomer] = useState<Customer[]>([]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: keyof Item
-  ) => {
-    setNewItem({ ...newItem, [key]: e.target.value });
-  };
+  useEffect(() => {
+    // Fetch users when the component mounts
+    axiosInstance
+      .get("http://localhost:8080/get-customers")
+      .then((response) => {
+        setCustomer(response.data.data);
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []); 
 
-  const handleAddItem = () => {
-    setItems([...items, newItem]);
-    setNewItem({
+  useEffect(() => {
+    // Initialize with one default product row
+    addProduct();
+  }, []); // Empty dependency array ensures this effect runs only once after initial render
+
+  const addProduct = () => {
+    const newProduct: Product = {
+      sn: products.length + 1,
       name: "",
-      availableQty: 0,
       quantity: 0,
       rate: 0,
-      discount: 0,
       total: 0,
-    });
+      availableQuantity: 0,
+      discount: 0,
+      paymentType: "Cash", // Initialize Payment Type as 'Cash'
+    };
+    setProducts([...products, newProduct]);
   };
 
-  React.useEffect(() => {
-    let totalDiscount = 0;
-    let grandTotal = 0;
+  const handleInputChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+    const newProducts = [...products];
+    newProducts[index] = {
+      ...newProducts[index],
+      [name]: value,
+    };
+    newProducts[index].total =
+      newProducts[index].quantity * newProducts[index].rate;
+    setProducts(newProducts);
+  };
 
-    items.forEach((item) => {
-      const itemTotal = item.quantity * item.rate - item.discount;
-      grandTotal += itemTotal;
-      totalDiscount += item.discount;
-    });
+  const deleteProduct = (index: number) => {
+    const newProducts = [...products];
+    newProducts.splice(index, 1);
+    setProducts(newProducts);
+  };
 
-    const totalDue = grandTotal - paidAmount;
-    setTotalDiscount(totalDiscount);
-    setGrandTotal(grandTotal);
-    setTotalDue(totalDue);
-  }, [items, paidAmount]);
-  const [supplier, setSupplier] = useState<string>("");
+  const calculateGrandTotal = () => {
+    return products.reduce((acc, curr) => acc + curr.total, 0);
+  };
+
+  const calculateTotalDiscount = () => {
+    return products.reduce((acc, curr) => acc + curr.discount, 0);
+  };
+
+  const calculateDue = () => {
+    return calculateGrandTotal() - paidAmount;
+  };
+
+  const handleSave = () => {
+    // Add your save logic here
+    console.log("Saving data:", products);
+    console.log("Paid amount:", paidAmount);
+    console.log("Payment type:", paymentType);
+  };
+  interface IForm {
+    CustomerName: string;
+    date: Number;
+  }
+  const { register, handleSubmit } = useForm<IForm>({
+    defaultValues: {
+      CustomerName: "",
+      date: "",
+    },
+  });
 
   return (
-    <div className="bg-violet-200 h-screen">
-      <h1 className="text-xl mt-4 ml-10">Add Sale bill</h1>
-      <a className="ml-8 text-blue-500" href="#">
+    <div className="md:h-[100vh] flex-col">
+      <h1 className="text-xl mt-4 ml-10">Add Sale Bill</h1>
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
-      / Add Bill
-      <div className="bg-white shadow-2xl">
-        <div className="">
-          <div className="flex gap-10 my-12  mb-4">
-            <label
-              className="block   text-gray-700 font-bold mt-10"
-              htmlFor="email"
-            >
-              Customer Name*
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value)}
-              className="form-input mt-10 py-2 border w-96 "
-            />
-          </div>
-        </div>
-        <div className="flex gap-40 mt-4 mb-6">
-          <div className="">
-            <div className="flex gap-10  mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2 ml-10"
-                htmlFor="email"
-              >
-                Date*
-              </label>
-              <input
-                type="date"
-                id="email"
-                value={supplier}
-                onChange={(e) => setSupplier(e.target.value)}
-                className="form-input w-96 py-2 border"
-              />
-            </div>
-          </div>
-          <div className="relative">
-            <Button>New Customer</Button>
-          </div>
-        </div>
-        <div>
-          <hr
-            className="w-[1250px]  mb-8 mx-4
-           bg-red-600 h-[3px]"
-          />
-        </div>
+      </Link>
+      / Add Sale Bill
+      <div>
+        <hr className="md:w-[1250px] mt-10 mx-4 bg-red-600 h-[3px]" />
+      </div>
+      <div className="flex ml-6 mt-3">
+                    <label className="gap-8 flex mt-1 ">
+                      Customer Name:
+                      <select
+                        className="ml- w- py-2 w-80 rounded border border-l-amber-500"
+                        {...register("CustomerName")}
+                      >
+                         <option value="choose Option">choose option </option>
+                        {customers.map((customer)=>(
+                          <option value="Salary">{customer.name}</option>
+                        ))}
+                        
 
-        <table className="border px-4 py-2 mr-2">
+                      </select>
+                    </label>
+                  </div>
+      <div className="flex  md:gap-7 gap-10 mt-4 mb-10">
+        <h1 className="md:ml-4 w-32">Date:</h1>
+        <Input
+          type="date"
+          placeholder="date"
+          className="md:w-80"
+          {...register("date")}
+        />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="table-auto w-full">
           <thead>
-            <tr className="gap-10 text-sm">
-              <th className="pl-4 ">Item Information</th>
-              <th className="pl-28 ">Available Qty</th>
-              <th className="pl-32">Quantity</th>
-              <th className=" pl-32">Rate</th>
-              <th className="pl-36">Discount</th>
-              <th className=" pl-40">Total</th>
-              <th className="pl-24">Action</th>
+            <tr>
+              <th className="px-4 py-2">SN</th>
+              <th className="px-4 py-2">Product Name</th>
+              <th className="px-4 py-2">Available Quantity</th>
+              <th className="px-4 py-2">Quantity</th>
+              <th className="px-4 py-2">Rate</th>
+              <th className="px-4 py-2">Discount</th>
+              <th className="px-4 py-2">Total</th>
+              <th className="px-4 py-2">Payment Type</th>
+              <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item, index) => (
+            {products.map((product, index) => (
               <tr key={index}>
-                <td className="border  ">{item.name}</td>
-                <td className="border  ">{item.availableQty}</td>
-                <td className="border  ">{item.quantity}</td>
-                <td className="border  ">{item.rate}</td>
-                <td className="border  ">{item.discount}</td>
-                <td className="border  ">
-                  {item.quantity * item.rate - item.discount}
+                <td className="border px-4 py-2">{product.sn}</td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="text"
+                    name="name"
+                    value={product.name}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
                 </td>
-                <td className="border  ">{item.total}</td>
-                <td className="border  ">Action Buttons</td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    name="availableQuantity"
+                    value={product.availableQuantity}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={product.quantity}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    name="rate"
+                    value={product.rate}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    name="discount"
+                    value={product.discount}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">{product.total}</td>
+                <td className="border px-4 py-2">
+                  <select
+                    name="paymentType"
+                    value={product.paymentType}
+                    onChange={(e) => {
+                      const newProducts = [...products];
+                      newProducts[index].paymentType = e.target.value;
+                      setProducts(newProducts);
+                    }}
+                  >
+                    <option value="Cash">Cash</option>
+                    <option value="Bank Account">Bank Account</option>
+                    <option value="Cheque">Cheque</option>
+                  </select>
+                </td>
+                <td className="border px-4 py-2">
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                    onClick={() => deleteProduct(index)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        <div className="mt-4">
-          <input
-            type="text"
-            placeholder="Item Information"
-            value={newItem.name}
-            onChange={(e) => handleChange(e, "name")}
-            className="border px-4 py-2 mr-2 "
-          />
-          <input
-            type="number"
-            placeholder="Available Qty"
-            value={newItem.availableQty}
-            onChange={(e) => handleChange(e, "availableQty")}
-            className="border py-2 mr-2"
-          />
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={newItem.quantity}
-            onChange={(e) => handleChange(e, "quantity")}
-            className="border  py-2 mr-2"
-          />
-          <input
-            type="number"
-            placeholder="Rate"
-            value={newItem.rate}
-            onChange={(e) => handleChange(e, "rate")}
-            className="border py-2 mr-2"
-          />
-          <input
-            type="number"
-            placeholder="Discount"
-            value={newItem.discount}
-            onChange={(e) => handleChange(e, "discount")}
-            className="border py-2 mr-2"
-          />
-          <input
-            type="number"
-            placeholder="total"
-            value={newItem.total}
-            onChange={(e) => handleChange(e, "total")}
-            className="border px-4 py-2 mr-2"
-          />
-          <button onClick={handleAddItem} className="">
-            Add Item
-          </button>
-        </div>
-        <div className="mt-4  ml-[900px] ">
-          <div className=" top-0 right-0">
-            <label>Total Discount: </label>
-            <span>{totalDiscount}</span>
-          </div>
-          <div>
-            <label>Grand Total: </label>
-            <span>{grandTotal}</span>
-          </div>
-          <div>
-            <label>Paid Amount: </label>
+      </div>
+      <div className="mt-4 flex justify-between">
+        <Button className="" onClick={addProduct}>
+          Add Item
+        </Button>
+        <div className="mr-8">
+          <p>Grand Total: {calculateGrandTotal()}</p>
+          <p>Total Discount: {calculateTotalDiscount()}</p>
+          <p>
+            Paid Amount:
             <input
               type="number"
               value={paidAmount}
-              onChange={(e) => setPaidAmount(parseFloat(e.target.value))}
-              className="border px-4 py-2 mr-2"
+              onChange={(e) => setPaidAmount(parseInt(e.target.value))}
+              className="ml-2"
             />
-          </div>
-          <div className="flex gap-2 text-center">
-            <label className="text-center mt-2">Payment Type: </label>
+          </p>
+
+          <p>
+            Payment Type:
             <select
-              name="selectedFruit"
-              className=" w-52 text-center py-1 mt-2 rounded border border-l-amber-500"
+              value={paymentType}
+              onChange={(e) => setPaymentType(e.target.value)}
             >
-              <option value="apple">choose Payment Method</option>
-              <option value="apple">Cash</option>
-              <option value="banana">Bank</option>
-              <option value="orange">Cheaque</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Account">Bank Account</option>
+              <option value="Cheque">Cheque</option>
             </select>
-          </div>
-          <div className="pb-10">
-            <label>Total Due: </label>
-            <span>{totalDue}</span>
-          </div>
+          </p>
+          <p>Due: {calculateDue()}</p>
         </div>
-        <Button className="ml-96 mb-4 w-24">save</Button>
       </div>
+      <button
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4"
+        onClick={handleSave}
+      >
+        Save
+      </button>
     </div>
   );
 };
 
-export default Table;
+export default AddBill;

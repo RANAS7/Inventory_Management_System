@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const invoices = [
   {
@@ -23,11 +24,11 @@ const invoices = [
 
 export function SalesReport() {
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Sales Report</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       / Sales Report
       <div className="ml-10">
         <h1 className="text-center text-xl">Sale Ledger data</h1>
@@ -41,7 +42,7 @@ export function SalesReport() {
       </div>
       <div>
         <Input
-          className="w-96 ml-[850px] mb-10"
+          className="w-96 md:ml-[850px] md:mb-10 mb-6 ml-20"
           type="text"
           placeholder="search"
         />

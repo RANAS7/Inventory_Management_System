@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const invoices = [
   {
@@ -58,48 +59,48 @@ const invoices = [
 
 export function CreditCustomer() {
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Credit Customer</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       /Credit Customer
       <div>
         <Input
-          className="w-96 ml-[850px] mb-10"
+          className="w-96 md:ml-[850px] md:mb-10 mb-2 ml-20 mt-10"
           type="text"
           placeholder="search"
         />
       </div>
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>S.N</TableHead>
-          <TableHead>Customer</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>S.N</TableHead>
+            <TableHead>Customer</TableHead>
 
-          <TableHead>E-mail</TableHead>
-          <TableHead>Mobile</TableHead>
-          <TableHead>Total Amount</TableHead>
-          <TableHead>paid Amount</TableHead>
-          <TableHead>Remaining Amount</TableHead>
-          <TableHead>Option</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.sn}>
-            <TableCell className="font-medium">{invoice.sn}</TableCell>
-            <TableCell>{invoice.customer}</TableCell>
-            <TableCell>{invoice.phone}</TableCell>
-            <TableCell>{invoice.email}</TableCell>
-            <TableCell>{invoice.tamount}</TableCell>
-            <TableCell>{invoice.pamount}</TableCell>
-            <TableCell>{invoice.ramount}</TableCell>
-            <TableCell>{invoice.option}</TableCell>
+            <TableHead>E-mail</TableHead>
+            <TableHead>Mobile</TableHead>
+            <TableHead>Total Amount</TableHead>
+            <TableHead>paid Amount</TableHead>
+            <TableHead>Remaining Amount</TableHead>
+            <TableHead>Option</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {invoices.map((invoice) => (
+            <TableRow key={invoice.sn}>
+              <TableCell className="font-medium">{invoice.sn}</TableCell>
+              <TableCell>{invoice.customer}</TableCell>
+              <TableCell>{invoice.phone}</TableCell>
+              <TableCell>{invoice.email}</TableCell>
+              <TableCell>{invoice.tamount}</TableCell>
+              <TableCell>{invoice.pamount}</TableCell>
+              <TableCell>{invoice.ramount}</TableCell>
+              <TableCell>{invoice.option}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

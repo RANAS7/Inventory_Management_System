@@ -1,15 +1,16 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 const Transaction = () => {
   return (
     <>
-      <div>
+      <div className="md:h-[100vh] flex-col">
         <h1 className="text-xl mt-4 ml-10">Transaction/ Cash Receivable</h1>
-        <a className="ml-8 text-blue-500" href="#">
+        <Link className="ml-8 text-blue-500" to="/dashboard">
           Dashboard
-        </a>
+        </Link>
         / Transaction
-        <div className="bg-white w-[100%] h-screen">
+        <div className="bg-white w-[100%]">
           <div>
             <div className="flex mx-auto">
               <div className="w-[45%]">
@@ -33,7 +34,7 @@ const Transaction = () => {
                   <p className="mt-1"> Total Amount:</p>
                   <p className="mt-1">Paid Amount:</p>
                   <hr className="bg-red-500 w-80 h-[2px] mt-4" />
-                  <p className="mt-4">Remaing Amount:</p>
+                  <p className="mt-4">Remaining Amount:</p>
                 </div>
                 <div className="flex gap-20 ml-6 mt-3">
                   <h1>Cash Received:</h1>
@@ -70,12 +71,14 @@ const Transaction = () => {
                 </div>
               </div>
 
-              <div className="mt-36 w-[100%] ml-10">
-                <h1 className="ml-10 text-center mb-10 text-3xl">
-                  {" "}
-                  Account Balance:
-                </h1>
-                <div className="flex ml-0 gap-4">
+              <div className=" md:flex Md:mt-36 md:w-[100%] md:ml-10">
+                <div className="md:block hidden">
+                  <h1 className="md:ml-10 text-center mb-10 text-3xl">
+                    {" "}
+                    Account Balance:
+                  </h1>
+                </div>
+                <div className="md:flex hidden ml-0 gap-4">
                   <div className="bg-green-500 w-[31%] shadow- block rounded h-20">
                     <h1 className="text-center  text-xl font-smibold">
                       Cash Amount

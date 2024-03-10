@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FaPlus } from "react-icons/fa";
 import {
   Table,
   TableBody,
@@ -9,74 +8,119 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Link } from "react-router-dom";
+import axiosInstance from "@/lib/api";
+import { useEffect, useState } from "react";
+import React from "react";
 
-const invoices = [
-  {
-    sn: "1",
-    productName: "Apple",
-    image: "Product Image show",
-    costprice: "Rs. 450",
-    stock: "550",
-    option: [
-      <button className="bg-green-500  m-3 w-12 items-center rounded-sm">
-        View
-      </button>,
-      <button className="bg-white  w-12 items-center rounded-sm">Edit</button>,
-      <button className="bg-red-500 m-3 w-12 items-center rounded-sm">
-        Delete
-      </button>,
-    ],
-  },
-];
+interface Vendor {
+  name: string;
+  email: string;
+  contact: string;
+  contact_person: string;
+}
+
+interface ProductDetail {
+  quantity: number;
+  price: number;
+  available: boolean;
+  vendor: Vendor;
+}
+
+interface Product {
+  id: number;
+  Product_Name: string;
+  Images: string;
+  product_detail: ProductDetail[];
+}
+
 const Product = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [search, setSearch] = useState<string>("");
+
+  useEffect(() => {
+    axiosInstance
+      .get("/get-products")
+      .then((res) => {
+        if (res.data) {
+          setProducts(res.data);
+          console.log("Products are successfully fetched", res.data);
+        } else {
+          console.error("No data found in the response");
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching products", err);
+      });
+  }, []);
+
+  const handleDelete = async (productId: number) => {
+    try {
+      await axiosInstance.delete(`/delete-product/${productId}`);
+      // After deletion, fetch updated product list
+      setProducts(products.filter((product) => product.id !== productId));
+      console.log("Product deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   return (
     <>
       <div className="h-screen">
         <h1 className="text-xl mt-4 ml-10">All Product</h1>
-        <a className="ml-8 text-blue-500" href="#">
+        <Link className="ml-8 text-blue-500" to="/dashboard">
           Dashboard
-        </a>
+        </Link>
         / All Product
-        {/* <div className=" flex justify-end mr-10">
-          <Button className="w-24 items-center gap-3">
-            {" "}
-            <FaPlus />
-            Create
-          </Button>
-        </div> */}
         <div>
           <Input
-            className="w-96 ml-[850px] mt-6 mb-10"
+            className="md:w-96 md:ml-[850px] md:mb-10 w-72 ml-28 mb-2 mt-4"
             type="text"
-            placeholder="search"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className="mt-4">
           <Table>
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader className="text-center">
               <TableRow>
                 <TableHead className="w-[100px]">S.N</TableHead>
                 <TableHead>Image</TableHead>
                 <TableHead>Product Name</TableHead>
                 <TableHead>Cost Price</TableHead>
-                <TableHead>Stock Qnty</TableHead>
-                <TableHead className="text-center">option</TableHead>
+                <TableHead>Stock Quantity</TableHead>
+                <TableHead className="text-center">Option</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((invoice) => (
-                <TableRow key={invoice.sn}>
-                  <TableCell className="font-medium">{invoice.sn}</TableCell>
-                  <TableCell>{invoice.image}</TableCell>
-                  <TableCell>{invoice.productName}</TableCell>
-                  <TableCell>{invoice.costprice}</TableCell>
-                  <TableCell>{invoice.stock}</TableCell>
-                  <TableCell className="text-center">
-                    {invoice.option}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {products
+                .filter((product) =>
+                  search.toLowerCase() === ""
+                    ? true
+                    : product.Product_Name.toLowerCase().includes(
+                        search.toLowerCase()
+                      )
+                )
+                .map((product, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{product.Images}</TableCell>
+                    <TableCell>{product.Product_Name}</TableCell>
+                    {product.product_detail.map((productD, index) => (
+                      <React.Fragment key={index}>
+                        <TableCell>{productD.price}</TableCell>
+                        <TableCell>{productD.quantity}</TableCell>
+                      </React.Fragment>
+                    ))}
+                    <TableCell className="text-center">
+                      <Button onClick={() => handleDelete(product.id)}>
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </div>

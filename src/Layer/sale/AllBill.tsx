@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const invoices = [
   {
@@ -30,15 +31,15 @@ const invoices = [
 
 export function AllBill() {
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Bill List</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       /Bill List
       <div>
         <Input
-          className="w-96 ml-[850px] mb-10"
+          className="w-96 md:ml-[850px] md:mb-10 mb-2 ml-20 mt-10"
           type="text"
           placeholder="search"
         />

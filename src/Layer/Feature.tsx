@@ -4,21 +4,28 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { BiPurchaseTagAlt } from "react-icons/bi";
+
 import { CiBellOn } from "react-icons/ci";
 
-import { MdDashboard, MdOutlineInventory2 } from "react-icons/md";
+import { MdDashboard } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { FaUserFriends } from "react-icons/fa";
+import { FaCartPlus } from "react-icons/fa";
+import { FiBarChart } from "react-icons/fi";
+import { PiUsersFourBold } from "react-icons/pi";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
+import { GiReceiveMoney } from "react-icons/gi";
 const Feature = () => {
   return (
     <>
-      <div className="ml-10  font-serif ">
+      <div className=" text-[17px] md:ml-10  font-serif h-[100vh]">
         <ul className="space-y-2 mt-4 ">
           <li className="flex gap-2 items-center">
             <MdDashboard />
             <Link to="">Dashboard</Link>
           </li>
-          <li className="flex gap-2 items-center">
+          <li className="text-center flex gap-2 items-center">
             <SupplierForm
               name="/AddSupplier"
               link="/addsupplier"
@@ -28,7 +35,7 @@ const Feature = () => {
               ]}
             />
           </li>
-          <li className="flex gap-2 items-center">
+          <li className=" text-center flex gap-2 items-center">
             <PurchaseBill
               name="/user"
               link="/user"
@@ -38,7 +45,7 @@ const Feature = () => {
               ]}
             />
           </li>
-          <li className="flex gap-2 items-center">
+          <li className="text-center flex gap-2 items-center">
             <ProductList
               name="/user"
               link="/user"
@@ -48,7 +55,7 @@ const Feature = () => {
               ]}
             />
           </li>
-          <li className="flex gap-2 items-center">
+          <li className="text-center flex gap-2 items-center">
             <CustomerForm
               name="/AddSupplier"
               link="/addsupplier"
@@ -59,7 +66,7 @@ const Feature = () => {
               ]}
             />
           </li>
-          <li className="flex gap-2 items-center">
+          <li className="text-center flex gap-2 items-center">
             <SaleBill
               name="/AddSupplier"
               link="/addsupplier"
@@ -70,10 +77,11 @@ const Feature = () => {
               ]}
             />
           </li>
-          <li className="flex gap-2 items-center">
-            <Link to="dashboard/transaction">Transaction</Link>
+          <li className=" flex gap-2 items-center">
+            <FaMoneyBillTrendUp />
+            <Link to="transaction">Transaction</Link>
           </li>
-          <li className="flex gap-2 items-center">
+          <li className="text-center flex gap-2 items-center">
             <Expense
               name="/User"
               link="/user"
@@ -83,7 +91,7 @@ const Feature = () => {
               ]}
             />
           </li>
-          <li className="flex gap-2 items-center">
+          <li className="text-center flex gap-2 items-center">
             <AddStaff
               name="/User"
               link="/user"
@@ -93,31 +101,8 @@ const Feature = () => {
               ]}
             />
           </li>
-          {/* <li className="flex gap-2 items-center">
-            <a href="">Setting</a>
-          </li> */}
-          {/* <li className="flex gap-2 items-center">
-            <PurchaseList
-              name="/user"
-              link="/user"
-              subMenu={[
-                { name: "All Purchase", link: "purchase" },
-                { name: "Create Purchase", link: "" },
-              ]}
-            />
-          </li> */}
-          {/* <li className="flex gap-2 items-center">
-            <Sidebarmenu
-              name="/User"
-              link="/user"
-              subMenu={[
-                { name: "Cash", link: "Suppliers" },
-                { name: "Wallet", link: "client" },
-                { name: "Cheque", link: "client" },
-              ]}
-            />
-          </li> */}
-          <li className="flex gap-2 items-center">
+
+          <li className="text-center flex gap-2 items-center">
             <Report
               name="/User"
               link="/user"
@@ -128,7 +113,7 @@ const Feature = () => {
             />
           </li>
 
-          <li className="flex gap-2 items-center">
+          <li className="flex gap-4 items-center">
             <CiBellOn />
             <a href="">Notice</a>
           </li>
@@ -155,43 +140,109 @@ interface DropDownType {
   name: string;
   subMenu?: DropDownType[];
 }
-
-// function SidebarSubMenuList(props: DropDownType) {
-//   const { subMenu } = props;
-//   return (
-//     <div>
-//       <Accordion type="single" collapsible className="w-full">
-//         <AccordionItem value="item-1">
-//           <AccordionTrigger>User</AccordionTrigger>
-//           {/* <AccordionContent>
-//             <Link to={`/dashboard/${link}`}>{name}</Link>
-//           </AccordionContent> */}
-
-//           {subMenu?.map((user) => {
-//             return (
-//               <>
-//                 <div>
-//                   <AccordionContent>
-//                     <Link className="text-xl" to={`/dashboard/${user?.link}`}>
-//                       {user?.name}
-//                     </Link>
-//                   </AccordionContent>
-//                 </div>
-//               </>
-//             );
-//           })}
-//         </AccordionItem>
-//       </Accordion>
-//     </div>
-//   );
-// }
-function Sidebarmenu(props: DropDownType) {
-  const { name, link, subMenu } = props;
+function SupplierForm(props: DropDownType) {
+  const { subMenu } = props;
   return (
     <div>
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Balance</AccordionTrigger>
+        <AccordionItem value="item-1" className="border-b-0 ">
+          <div className="flex items-center gap-4">
+            <FaUserFriends className="" values="" />
+            <AccordionTrigger className="gap-[78px] ">
+              {" "}
+              Supplier
+            </AccordionTrigger>
+          </div>
+          {subMenu?.map((user) => {
+            return (
+              <>
+                <div>
+                  <AccordionContent className="">
+                    <Link
+                      className="no-underline"
+                      to={`/dashboard/${user?.link}`}
+                    >
+                      {user?.name}
+                    </Link>
+                  </AccordionContent>
+                </div>
+              </>
+            );
+          })}
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+}
+function PurchaseBill(props: DropDownType) {
+  const { subMenu } = props;
+  return (
+    <div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            <LiaFileInvoiceSolid />
+            <AccordionTrigger className="gap-10">
+              Purchase Bill
+            </AccordionTrigger>
+          </div>
+          {subMenu?.map((user) => {
+            return (
+              <>
+                <div>
+                  <AccordionContent>
+                    <Link className="" to={`/dashboard/${user?.link}`}>
+                      {user?.name}
+                    </Link>
+                  </AccordionContent>
+                </div>
+              </>
+            );
+          })}
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+}
+function ProductList(props: DropDownType) {
+  const { subMenu } = props;
+  return (
+    <div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            <FaCartPlus />
+            <AccordionTrigger className="gap-16">Inventory</AccordionTrigger>
+          </div>
+          {subMenu?.map((user) => {
+            return (
+              <>
+                <div>
+                  <AccordionContent>
+                    <Link className="" to={`/dashboard/${user?.link}`}>
+                      {user?.name}
+                    </Link>
+                  </AccordionContent>
+                </div>
+              </>
+            );
+          })}
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+}
+
+function Sidebarmenu(props: DropDownType) {
+  const { subMenu } = props;
+  return (
+    <div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center flex-2">
+            {" "}
+            <AccordionTrigger>Balance</AccordionTrigger>
+          </div>
           {subMenu?.map((user) => {
             return (
               <>
@@ -210,88 +261,17 @@ function Sidebarmenu(props: DropDownType) {
     </div>
   );
 }
-function ProductList(props: DropDownType) {
+
+function CustomerForm(props: DropDownType) {
   const { subMenu } = props;
   return (
     <div>
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Inventory</AccordionTrigger>
-          {subMenu?.map((user) => {
-            return (
-              <>
-                <div>
-                  <AccordionContent>
-                    <Link className="" to={`/dashboard/${user?.link}`}>
-                      {user?.name}
-                    </Link>
-                  </AccordionContent>
-                </div>
-              </>
-            );
-          })}
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
-}
-// function PurchaseList(props: DropDownType) {
-//   const { subMenu } = props;
-//   return (
-//     <div>
-//       <Accordion type="single" collapsible className="w-full">
-//         <AccordionItem value="item-1">
-//           <AccordionTrigger>Purchase</AccordionTrigger>
-//           {subMenu?.map((user) => {
-//             return (
-//               <>
-//                 <div>
-//                   <AccordionContent>
-//                     <Link className="" to={`/dashboard/${user?.link}`}>
-//                       {user?.name}
-//                     </Link>
-//                   </AccordionContent>
-//                 </div>
-//               </>
-//             );
-//           })}
-//         </AccordionItem>
-//       </Accordion>
-//     </div>
-//   );
-// }
-function SupplierForm(props: DropDownType) {
-  const { name, link, subMenu } = props;
-  return (
-    <div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Supplier</AccordionTrigger>
-          {subMenu?.map((user) => {
-            return (
-              <>
-                <div>
-                  <AccordionContent>
-                    <Link className="" to={`/dashboard/${user?.link}`}>
-                      {user?.name}
-                    </Link>
-                  </AccordionContent>
-                </div>
-              </>
-            );
-          })}
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
-}
-function CustomerForm(props: DropDownType) {
-  const { name, link, subMenu } = props;
-  return (
-    <div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Customer</AccordionTrigger>
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            <PiUsersFourBold />{" "}
+            <AccordionTrigger className="gap-16">Customer</AccordionTrigger>
+          </div>
           {subMenu?.map((user) => {
             return (
               <>
@@ -315,83 +295,12 @@ function SaleBill(props: DropDownType) {
   return (
     <div>
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Sale</AccordionTrigger>
-          {subMenu?.map((user) => {
-            return (
-              <>
-                <div>
-                  <AccordionContent>
-                    <Link className="" to={`/dashboard/${user?.link}`}>
-                      {user?.name}
-                    </Link>
-                  </AccordionContent>
-                </div>
-              </>
-            );
-          })}
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
-}
-function PurchaseBill(props: DropDownType) {
-  const { subMenu } = props;
-  return (
-    <div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Purchase Bill</AccordionTrigger>
-          {subMenu?.map((user) => {
-            return (
-              <>
-                <div>
-                  <AccordionContent>
-                    <Link className="" to={`/dashboard/${user?.link}`}>
-                      {user?.name}
-                    </Link>
-                  </AccordionContent>
-                </div>
-              </>
-            );
-          })}
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
-}
-function AddStaff(props: DropDownType) {
-  const { subMenu } = props;
-  return (
-    <div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Staff</AccordionTrigger>
-          {subMenu?.map((user) => {
-            return (
-              <>
-                <div>
-                  <AccordionContent>
-                    <Link className="" to={`/dashboard/${user?.link}`}>
-                      {user?.name}
-                    </Link>
-                  </AccordionContent>
-                </div>
-              </>
-            );
-          })}
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
-}
-function Report(props: DropDownType) {
-  const { subMenu } = props;
-  return (
-    <div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Report</AccordionTrigger>
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            {" "}
+            <GiReceiveMoney />
+            <AccordionTrigger className="gap-[107px]">Sale</AccordionTrigger>
+          </div>
           {subMenu?.map((user) => {
             return (
               <>
@@ -415,8 +324,69 @@ function Expense(props: DropDownType) {
   return (
     <div>
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Expense</AccordionTrigger>
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            <LiaFileInvoiceSolid />
+            <AccordionTrigger className="gap-[75px]">Expense</AccordionTrigger>
+          </div>
+          {subMenu?.map((user) => {
+            return (
+              <>
+                <div>
+                  <AccordionContent>
+                    <Link className="" to={`/dashboard/${user?.link}`}>
+                      {user?.name}
+                    </Link>
+                  </AccordionContent>
+                </div>
+              </>
+            );
+          })}
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+}
+
+function AddStaff(props: DropDownType) {
+  const { subMenu } = props;
+  return (
+    <div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            <PiUsersFourBold />
+            <AccordionTrigger className="gap-[103px]">Staff</AccordionTrigger>
+          </div>
+          {subMenu?.map((user) => {
+            return (
+              <>
+                <div>
+                  <AccordionContent>
+                    <Link className="" to={`/dashboard/${user?.link}`}>
+                      {user?.name}
+                    </Link>
+                  </AccordionContent>
+                </div>
+              </>
+            );
+          })}
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+}
+
+function Report(props: DropDownType) {
+  const { subMenu } = props;
+  return (
+    <div>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-b-0">
+          <div className="flex items-center gap-4">
+            <FiBarChart />
+            <AccordionTrigger className="gap-[87px]">Report</AccordionTrigger>
+          </div>
           {subMenu?.map((user) => {
             return (
               <>

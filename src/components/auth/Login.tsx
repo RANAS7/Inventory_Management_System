@@ -34,23 +34,34 @@ export default function Login() {
   };
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          type="text"
-          placeholder="company Name"
-          className="w-80"
-          {...register("email")}
+      <div>
+        <img
+          className=" ml-[43%] mt-32 mb-4 rounded-full w-[10%]"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwLcjjUm8rv_lU5GoAuEVrndz0Cr8z7PXr5cWwwKRX5un_9y4Dw_HFnU8LumO8EJ2iXtM&usqp=CAU"
+          alt=""
         />
+        <div className="flex justify-center  items-center">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              type="text"
+              placeholder="username"
+              className="w-80 mb-5"
+              {...register("email")}
+            />
 
-        <Input
-          type="text"
-          placeholder="company Name"
-          className="w-80"
-          {...register("password")}
-        />
+            <Input
+              type="text"
+              placeholder="password"
+              className="w-80 mb-5"
+              {...register("password")}
+            />
 
-        <Button type="submit">Login</Button>
-      </form>
+            <Button type="submit" className="text-center w-24 ml-24">
+              Login
+            </Button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

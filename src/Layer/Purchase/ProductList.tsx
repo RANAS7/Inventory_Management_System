@@ -7,38 +7,74 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axiosInstance from "@/lib/api";
+import React from "react";
+import { Button } from "@/components/ui/button";
 
-const invoices = [
-  {
-    sn: "1",
-    refno: "INVO6",
-    customer: "Hari",
-    date: "2081-02-15",
-    totalamount: "Rs 10000",
-    paidamount: "Rs 5000",
-    remaingamount: "5000",
-    option: [
-      <button className="bg-green-500 m-3 w-24 items-center rounded-sm">
-        Edit
-      </button>,
-      <button className="bg-red-700  w-12 items-center rounded-sm">
-        Delete
-      </button>,
-    ],
-  },
-];
+interface Vendor {
+  name: string;
+  email: string;
+  contact: string;
+  contact_person: string;
+}
 
+interface ProductDetail {
+  map(
+    arg0: (productD: any, index: any) => import("react/jsx-runtime").JSX.Element
+  ): React.ReactNode;
+  quantity: number;
+  price: number;
+  available: boolean;
+  vendor: Vendor;
+}
+
+interface Product {
+  id: number;
+  Product_Name: string;
+  Images: string;
+  product_detail: ProductDetail;
+}
 export function ProductList() {
+  const [purchases, setPurchases] = useState<Product[]>([]);
+  useEffect(() => {
+    axiosInstance
+      .get("/get-products")
+      .then((res) => {
+        if (res.data) {
+          setPurchases(res.data);
+          console.log("Products are successfully fetched", res.data);
+        } else {
+          console.error("No data found in the response");
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching products", err);
+      });
+  }, []);
+
+  const handleDelete = async (productId: number) => {
+    try {
+      await axiosInstance.delete(`/delete-product/${productId}`);
+      // After deletion, fetch updated product list
+      setPurchases(purchases.filter((purchase) => purchase.id !== productId));
+      console.log("Product deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Product List</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       /ProductList
       <div>
         <Input
-          className="w-96 ml-[850px] mb-10"
+          className="md:w-96 md:ml-[850px] md:mb-10 w-72 ml-28 mb-2 mt-4"
           type="text"
           placeholder="search"
         />
@@ -48,32 +84,50 @@ export function ProductList() {
           <TableRow>
             <TableHead>S.N</TableHead>
             <TableHead className="text-center">Ref No.</TableHead>
-
-            <TableHead className="text-center">Supplier Name</TableHead>
+            <TableHead className="text-center">Image</TableHead>
+            <TableHead className="text-center">Product</TableHead>
+            <TableHead className="text-center">Supplier</TableHead>
             <TableHead className="text-center">Date</TableHead>
+            <TableHead className="text-center">Quantity</TableHead>
+            <TableHead className="text-center">Price</TableHead>
             <TableHead className="text-center">Total Amount</TableHead>
             <TableHead className="text-center">paid Amount</TableHead>
-            <TableHead className="text-center">Unpaid Amount</TableHead>
+            <TableHead className="text-center">Due Amount</TableHead>
             <TableHead className="text-center">Option</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.sn}>
-              <TableCell className="font-medium">{invoice.sn}</TableCell>
-              <TableCell className="text-center">{invoice.refno}</TableCell>
-              <TableCell className="text-center">{invoice.customer}</TableCell>
-              <TableCell className="text-center">{invoice.date}</TableCell>
-              <TableCell className="text-center">
-                {invoice.totalamount}
+          {purchases.map((purchase) => (
+            <TableRow key={purchase.id}>
+              {/* <TableCell>{product.id}</TableCell> */}
+              <TableCell>
+                {(() => {
+                  let sn = 0;
+                  for (let i = 0; i <= purchases.length; i++) {
+                    sn += i;
+                  }
+                  return sn;
+                })()}
               </TableCell>
+              <TableCell>Ref No.</TableCell>
+              <TableCell>{purchase.Images}</TableCell>
+              <TableCell>{purchase.Product_Name}</TableCell>
+              {purchase.product_detail.map((productD) => (
+                <React.Fragment key={productD.id}>
+                  <TableCell>{productD.vendor.name}</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>total Amount</TableCell>
+                  <TableCell>{productD.quantity}</TableCell>
+                  <TableCell>{productD.price}</TableCell>
+                  <TableCell>Paid Amount</TableCell>
+                  <TableCell>Due Amount</TableCell>
+                </React.Fragment>
+              ))}
               <TableCell className="text-center">
-                {invoice.paidamount}
+                <Button onClick={() => handleDelete(purchase.id)}>
+                  Delete
+                </Button>
               </TableCell>
-              <TableCell className="text-center">
-                {invoice.remaingamount}
-              </TableCell>
-              <TableCell className="text-center">{invoice.option}</TableCell>
             </TableRow>
           ))}
         </TableBody>

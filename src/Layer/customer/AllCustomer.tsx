@@ -7,58 +7,64 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axiosInstance from "@/lib/api";
+import { Button } from "@/components/ui/button";
 
-const invoices = [
-  {
-    cname: "ABC",
-    cperson: "Ram",
-    email: "rm@gmail.com",
-    phone: "9848555",
-    baddress: "Kathmandu",
-    option: [
-      <button className="bg-green-500 m-3 w-12 items-center rounded-sm">
-        View
-      </button>,
-      <button className="bg-white  w-12 items-center rounded-sm">Edit</button>,
-      <button className="bg-red-500 m-3 w-12 items-center rounded-sm">
-        Delete
-      </button>,
-    ],
-  },
-  {
-    cname: "xyz",
-    cperson: "Hari",
-    email: "hari@gmail.com",
-    phone: "9848555",
-    baddress: "lalitpur, Nepal",
-    option: [
-      <button className="bg-green-500 m-3 w-12 items-center rounded-sm">
-        View
-      </button>,
-      <button className="bg-white  w-12 items-center rounded-sm">Edit</button>,
-      <button className="bg-red-500 m-3 w-12 items-center rounded-sm">
-        Delete
-      </button>,
-    ],
-  },
-];
+interface Customer {
+  id: number;
+  contact_person: string;
+  name: string;
+  email: string;
+  Contact: string;
+  address: string;
+  Option: string;
+}
 
 export function AllCustomer() {
+  const [customers, setCustomer] = useState<Customer[]>([]);
+
+  useEffect(() => {
+    // Fetch users when the component mounts
+    axiosInstance
+      .get("http://localhost:8080/get-customers")
+      .then((response) => {
+        setCustomer(response.data.data);
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []); // Add an empty dependency array to run only once when the component mounts
+  const handleDelete = async (id: number) => {
+    // Send delete request to the server
+    try {
+      await axiosInstance.delete(`http://localhost:8080/delete-customer/${id}`); // Corrected endpoint URL
+
+      // If successful, update the UI by removing the deleted user from the state
+      setCustomer(customers.filter((customer) => customer.id !== id));
+      console.log("customer  Deleted Successfully");
+    } catch (err) {
+      console.log("Error deleting user:", err);
+    }
+  };
+
   return (
-    <div>
+    <div className="md:h-[100vh] flex-col">
       <h1 className="text-xl mt-4 ml-10">Customer List</h1>
-      <a className="ml-8 text-blue-500" href="#">
+      <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
-      </a>
+      </Link>
       / Customer List
       <div>
         <Input
-          className="w-96 ml-[850px] mb-10"
+          className="md:w-96 md:ml-[850px] md:mb-10 w-72 ml-28 mb-2 mt-4"
           type="text"
           placeholder="search"
         />
       </div>
-      <Table>
+      <Table className="overflow-scroll">
         <TableHeader>
           <TableRow>
             <TableHead>Customer Name</TableHead>
@@ -70,14 +76,23 @@ export function AllCustomer() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.cname}>
-              <TableCell className="font-medium">{invoice.cname}</TableCell>
-              <TableCell>{invoice.cperson}</TableCell>
-              <TableCell>{invoice.email}</TableCell>
-              <TableCell>{invoice.phone}</TableCell>
-              <TableCell>{invoice.baddress}</TableCell>
-              <TableCell className="text-center">{invoice.option}</TableCell>
+          {customers.map((customer) => (
+            <TableRow key={customer.id}>
+              <TableCell className="font-medium">
+                {customer.contact_person}
+              </TableCell>
+              <TableCell>{customer.name}</TableCell>
+              <TableCell>{customer.email}</TableCell>
+              <TableCell>{customer.Contact}</TableCell>
+              <TableCell>{customer.address}</TableCell>
+              <TableCell>{customer.Option}</TableCell>
+              <TableCell className="text-center ">
+                <div className="space-x-2">
+                  <Button onClick={() => handleDelete(customer.id)}>
+                    Delete
+                  </Button>
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
