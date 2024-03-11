@@ -27,32 +27,25 @@ router.post("/addProduct", upload.single("productImg"), async (req, res) => {
       return res.status(400).json({ message: "File upload failed" });
     }
 
-    // images file upload should not be saved to db
-    // fileName,media-table
-
-    // MEDIA - prdoduct,category,
-
-    const productName = req.body.productName;
+    const { productName, supplier_id, quantity, price } = req.body;
     const images = req.file.filename;
 
-    // Using Prisma to check for an existing product
     const existingProduct = await prisma.products.findMany({
       where: {
-        Product_Name: productName,
+        product: productName,
       },
     });
 
     if (existingProduct.length > 0) {
-      const existedImage = existingProduct[0].Images;
-      const existingProductId = existingProduct[0].id;
+      const existedImage = existingProduct[0].Image;
+      const existingProduct = existingProduct[0].product;
 
-      // Update product image
       const updateData = await prisma.products.update({
         where: {
-          id: existingProductId,
+          product: existingProduct,
         },
         data: {
-          Images: images,
+          image: images,
         },
       });
 
@@ -67,20 +60,25 @@ router.post("/addProduct", upload.single("productImg"), async (req, res) => {
         message: "Product image updated successfully",
         result: updateData,
       });
-    } else {
-      // Insert a new product record
-      const newProduct = await prisma.products.create({
-        data: {
-          Product_Name: productName,
-          Images: images,
-        },
-      });
-
-      res.json({
-        message: "New product added successfully",
-        result: newProduct,
-      });
     }
+
+    let total = quantity * price;
+    // Insert a new product record
+    const newProduct = await prisma.products.createMany({
+      data: {
+        supplier_id: supplier_id,
+        image: images,
+        Product: productName,
+        quantity: quantity,
+        price: price,
+        total: total,
+      },
+    });
+
+    res.json({
+      message: "New product added successfully",
+      result: newProduct,
+    });
   } catch (error) {
     console.error("Error inserting user with Prisma", error);
     res.status(500).json({ error: "Internal Server Error" });

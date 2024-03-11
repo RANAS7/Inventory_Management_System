@@ -32,11 +32,18 @@ model salary {
 }
 
 model products {
-  id             Int              @id @default(autoincrement())
-  Product_Name   String?          @db.VarChar(150)
-  Images         String?          @db.Text
-  product_detail product_detail[]
-  sales          sales[]
+  id          Int       @id @default(autoincrement())
+  date        DateTime? @default(now()) @db.DateTime(0)
+  supplier_id Int?
+  Image       String?   @db.Text
+  product     String?   @db.VarChar(150)
+  quantity    Int?
+  price       Decimal?  @db.Decimal(10, 2)
+  total       Decimal?  @db.Decimal(10, 2)
+  vendor      vendor?   @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
+  sales       sales[]
+
+  @@index([supplier_id], map: "supplier_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -75,28 +82,13 @@ model notice {
 }
 
 model vendor {
-  id             Int              @id @default(autoincrement())
-  name           String?          @db.VarChar(150)
-  email          String?          @db.VarChar(150)
-  contact        String?          @db.VarChar(40)
-  contact_person String?          @db.VarChar(100)
-  address        String?          @db.VarChar(100)
-  product_detail product_detail[]
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model product_detail {
-  id         Int       @id @default(autoincrement())
-  vendor_id  Int?
-  product_id Int?
-  quantity   Int?
-  price      Decimal?  @db.Decimal(10, 2)
-  available  Int?
-  vendor     vendor?   @relation(fields: [vendor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_detail_ibfk_1")
-  products   products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_detail_ibfk_2")
-
-  @@index([product_id], map: "product_id")
-  @@index([vendor_id], map: "vendor_id")
+  id             Int        @id @default(autoincrement())
+  name           String?    @db.VarChar(150)
+  email          String?    @db.VarChar(150)
+  contact        String?    @db.VarChar(40)
+  contact_person String?    @db.VarChar(100)
+  address        String?    @db.VarChar(100)
+  products       products[]
 }
 
 model customer {

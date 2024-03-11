@@ -6,7 +6,7 @@ const router = express.Router();
 
 const prisma = new PrismaClient();
 
-router.put("/update-user/:editId", async (req, res) => {
+router.put("/update-product/:editId", async (req, res) => {
   try {
     const { editId } = req.params;
     const { Product_Name, Image, quantity, price } = req.body;
@@ -52,6 +52,7 @@ router.put("/update-user/:editId", async (req, res) => {
     res
       .status(200)
       .json({ message: "Product updated successfully", updatedProduct });
+    console.log("Updatd product", updatedProduct);
   } catch (error) {
     console.error("Error updating product:", error);
     res.status(500).json({ error: "Internal Server Error" });

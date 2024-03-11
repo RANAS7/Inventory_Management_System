@@ -24,9 +24,15 @@ CREATE TABLE `salary` (
 -- CreateTable
 CREATE TABLE `products` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `Product_Name` VARCHAR(150) NULL,
-    `Images` TEXT NULL,
+    `date` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `supplier_id` INTEGER NULL,
+    `Image` TEXT NULL,
+    `product` VARCHAR(150) NULL,
+    `quantity` INTEGER NULL,
+    `price` DECIMAL(10, 2) NULL,
+    `total` DECIMAL(10, 2) NULL,
 
+    INDEX `supplier_id`(`supplier_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -79,20 +85,6 @@ CREATE TABLE `vendor` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `product_detail` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `vendor_id` INTEGER NULL,
-    `product_id` INTEGER NULL,
-    `quantity` INTEGER NULL,
-    `price` DECIMAL(10, 2) NULL,
-    `available` INTEGER NULL,
-
-    INDEX `product_id`(`product_id`),
-    INDEX `vendor_id`(`vendor_id`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `customer` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(150) NULL,
@@ -124,6 +116,9 @@ CREATE TABLE `sales` (
 ALTER TABLE `salary` ADD CONSTRAINT `salary_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
+ALTER TABLE `products` ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `vendor`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
 ALTER TABLE `daily_exp` ADD CONSTRAINT `daily_exp_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
@@ -131,12 +126,6 @@ ALTER TABLE `miscellaneous` ADD CONSTRAINT `miscellaneous_ibfk_1` FOREIGN KEY (`
 
 -- AddForeignKey
 ALTER TABLE `notice` ADD CONSTRAINT `notice_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE `product_detail` ADD CONSTRAINT `product_detail_ibfk_1` FOREIGN KEY (`vendor_id`) REFERENCES `vendor`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE `product_detail` ADD CONSTRAINT `product_detail_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE `sales` ADD CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
