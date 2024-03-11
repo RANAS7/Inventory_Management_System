@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { Input } from "@/components/ui/input";
 import axiosInstance from "@/lib/api";
+import { Input } from "@/components/ui/input"
+
 
 interface Product {
   sn: number;
@@ -11,6 +12,7 @@ interface Product {
   quantity: number;
   rate: number;
   total: number;
+  image:string;
 }
 
 interface Vendor {
@@ -39,6 +41,7 @@ const PurchaseBill: React.FC = () => {
       quantity: 0,
       rate: 0,
       total: 0,
+      image:"",
     };
     setProducts([...products, newProduct]);
   };
@@ -100,6 +103,18 @@ const PurchaseBill: React.FC = () => {
     },
   });
 
+  const createProduct = async (data: IForm) => {
+    const response = await axiosInstance.post("/addProduct", data);
+    return response.data;
+  };
+  const onSubmit = async (data: IForm) => {
+    console.log("🚀 ~ onSubmit ~ data:", data);
+    await createProduct(data);
+    alert("purchase successfully");
+    console.log("purchase successfully");
+  };
+
+
   return (
     <div className="md:h-[100vh] flex-col mx-auto">
       <h1 className="text-xl mt-4 ml-10">Add Purchase Bill</h1>
@@ -141,6 +156,7 @@ const PurchaseBill: React.FC = () => {
             <tr>
               <th className="px-4 py-2">SN</th>
               <th className="px-4 py-2">Product Name</th>
+              <th className="px-4 py-2">image</th>
               <th className="px-4 py-2">Quantity</th>
               <th className="px-4 py-2">Rate</th>
               <th className="px-4 py-2">Total</th>
@@ -156,6 +172,15 @@ const PurchaseBill: React.FC = () => {
                     type="text"
                     name="name"
                     value={product.name}
+                    onChange={(e) => handleInputChange(index, e)}
+                    className="w-full"
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="file"
+                    name="image"
+                    value={product.image}
                     onChange={(e) => handleInputChange(index, e)}
                     className="w-full"
                   />

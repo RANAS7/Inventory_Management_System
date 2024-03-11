@@ -24,6 +24,10 @@ const DashboardLayout = () => {
   const handleSidebar = () => {
     setOpen(!open);
   };
+  const[click,setClick]=useState(false);
+  const handleClick=()=>{
+    setClick(!click);
+  }
 
 
   return ( 
@@ -52,7 +56,15 @@ const DashboardLayout = () => {
                 <span className="text-3xl">
                   <IoIosNotifications onClick={notify}  />
                 </span>
-                <div className="bg-black w-10 h-10 rounded-full"></div>
+                <div className="bg-black w-10 h-10 rounded-full" onClick={handleClick}>
+                  <img className="rounded-full" src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg" alt="" />
+                </div>
+                {click && (
+                   <div>
+                    <p>Abc</p>
+                   </div>
+                )}
+               
               </div>
             </div>
             {<Outlet />}
