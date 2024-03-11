@@ -5,6 +5,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 router.post("/add-salary", async (req, res) => {
+  const {amount, staff} = req.body;
   try {
     let date;
 
@@ -21,8 +22,8 @@ router.post("/add-salary", async (req, res) => {
     const salary = await prisma.salary.create({
       data: {
         Date: date.toISOString(),
-        Amount: parseFloat(req.body.amount),
-        User_ID: parseInt(req.body.selectedUser),
+        Amount: parseFloat(amount),
+        User_ID: parseInt(staff),
       },
     });
     res.json(salary);
