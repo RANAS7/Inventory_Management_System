@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 
 interface Product {
   sn: number;
-  name: string;
+  ProductName: string;
   quantity: number;
   rate: number;
   total: number;
@@ -37,7 +37,7 @@ const PurchaseBill: React.FC = () => {
   const addProduct = () => {
     const newProduct: Product = {
       sn: products.length + 1,
-      name: "",
+      ProductName: "",
       quantity: 0,
       rate: 0,
       total: 0,
@@ -91,10 +91,15 @@ const PurchaseBill: React.FC = () => {
     // Add your save logic here
     console.log("Saving data:", products);
     console.log("Paid amount:", paidAmount);
+    console.log()
   };
   interface IForm {
     supplierName: string;
     date: Number;
+    ProductName:string;
+    quantity:string;
+    rate:number;
+    total:number;
   }
   const { register, handleSubmit } = useForm<IForm>({
     defaultValues: {
@@ -125,6 +130,7 @@ const PurchaseBill: React.FC = () => {
       <div>
         <hr className="md:w-[1250px] mt-10 mx-4 bg-red-600 h-[3px]" />
       </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex ml-6 mt-3">
                     <label className="gap-8 flex mt-1 ">
                       Supplier Name:
@@ -171,7 +177,7 @@ const PurchaseBill: React.FC = () => {
                   <input
                     type="text"
                     name="name"
-                    value={product.name}
+                    value={product.ProductName}
                     onChange={(e) => handleInputChange(index, e)}
                     className="w-full"
                   />
@@ -241,9 +247,11 @@ const PurchaseBill: React.FC = () => {
       <Button
         className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4"
         onClick={handleSave}
+        type="submit"
       >
         Save
       </Button>
+      </form>
     </div>
   );
 };
