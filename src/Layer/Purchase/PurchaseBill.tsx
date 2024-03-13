@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/api";
-import { Input } from "@/components/ui/input"
-
-
-interface Product {
-  sn: number;
-  ProductName: string;
-  quantity: number;
-  rate: number;
-  total: number;
-  image:string;
-}
+import { Input } from "@/components/ui/input";
 
 interface Vendor {
   id: number;
@@ -25,26 +15,9 @@ interface Vendor {
 }
 
 const PurchaseBill: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [paidAmount, setPaidAmount] = useState<number>(0);
-   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
 
-  useEffect(() => {
-    // Initialize with one default product row
-    addProduct();
-  }, []); // Empty dependency array ensures this effect runs only once after initial render
-
-  const addProduct = () => {
-    const newProduct: Product = {
-      sn: products.length + 1,
-      ProductName: "",
-      quantity: 0,
-      rate: 0,
-      total: 0,
-      image:"",
-    };
-    setProducts([...products, newProduct]);
-  };
   // get supplier
   useEffect(() => {
     axiosInstance
@@ -56,72 +29,58 @@ const PurchaseBill: React.FC = () => {
       .catch((err) => {
         console.error(err);
       });
-  }, []); 
+  }, []);
 
-  const handleInputChange = (
-    index: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    const newProducts = [...products];
-    newProducts[index] = {
-      ...newProducts[index],
-      [name]: value,
-    };
-    newProducts[index].total =
-      newProducts[index].quantity * newProducts[index].rate;
-    setProducts(newProducts);
-  };
-
-  const deleteProduct = (index: number) => {
-    const newProducts = [...products];
-    newProducts.splice(index, 1);
-    setProducts(newProducts);
-  };
-
-  const calculateGrandTotal = () => {
-    return products.reduce((acc, curr) => acc + curr.total, 0);
-  };
-
-  const calculateDue = () => {
-    return calculateGrandTotal() - paidAmount;
-  };
-
-  const handleSave = () => {
-    // Add your save logic here
-    console.log("Saving data:", products);
-    console.log("Paid amount:", paidAmount);
-    console.log()
-  };
+  interface Product {
+    productName: string;
+    quantity: number;
+    rate: number;
+    total: number;
+    image: string;
+  }
   interface IForm {
     supplierName: string;
-    date: Number;
-    ProductName:string;
-    quantity:string;
-    rate:number;
-    total:number;
+    date: string;
+    product: Product[];
   }
-  const { register, handleSubmit } = useForm<IForm>({
-    defaultValues: {
-      supplierName: "",
-      date: "",
-    },
-  });
 
   const createProduct = async (data: IForm) => {
     const response = await axiosInstance.post("/addProduct", data);
     return response.data;
   };
+
+  const { register, handleSubmit, watch, control } = useForm<IForm>({
+    defaultValues: {
+      product: [
+        {
+          productName: "",
+          quantity: 0,
+          rate: 0,
+          total: 0,
+          image: "",
+        },
+      ],
+    },
+  });
+
+  const {
+    append: addProduct,
+    remove: removeProduct,
+    fields,
+  } = useFieldArray({
+    name: "product",
+    control,
+  });
+
+
+  console.log('foem data',watch("product"))
   const onSubmit = async (data: IForm) => {
-    console.log("🚀 ~ onSubmit ~ data:", data);
-    await createProduct(data);
-    alert("purchase successfully");
+    console.log('data ,',data)
     console.log("purchase successfully");
   };
 
-
   return (
-    <div className="md:h-[100vh] flex-col mx-auto">
+    <div className="h-[100vh] flex-col mx-auto overflow-scroll">
       <h1 className="text-xl mt-4 ml-10">Add Purchase Bill</h1>
       <Link className="ml-8 text-blue-500" to="/dashboard">
         Dashboard
@@ -131,126 +90,139 @@ const PurchaseBill: React.FC = () => {
         <hr className="md:w-[1250px] mt-10 mx-4 bg-red-600 h-[3px]" />
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex ml-6 mt-3">
-                    <label className="gap-8 flex mt-1 ">
-                      Supplier Name:
-                      <select
-                        className="ml- w- py-2 w-80 rounded border border-l-amber-500"
-                        {...register("supplierName")}
-                      >
-                         <option value="choose Option">choose option </option>
-                        {vendors.map((vendor)=>(
-                          <option value="Salary">{vendor.name}</option>
-                        ))}
-                        
-
-                      </select>
-                    </label>
-                  </div>
-      <div className="flex  md:gap-5 gap-10 mt-4 mb-10">
-        <h1 className="md:ml-4 w-32">Date:</h1>
-        <Input
-          type="date"
-          placeholder="date"
-          className="md:w-80"
-          {...register("date")}
-        />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">SN</th>
-              <th className="px-4 py-2">Product Name</th>
-              <th className="px-4 py-2">image</th>
-              <th className="px-4 py-2">Quantity</th>
-              <th className="px-4 py-2">Rate</th>
-              <th className="px-4 py-2">Total</th>
-              <th className="px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr key={index}>
-                <td className="border px-4 py-2">{product.sn}</td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="text"
-                    name="name"
-                    value={product.ProductName}
-                    onChange={(e) => handleInputChange(index, e)}
-                    className="w-full"
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="file"
-                    name="image"
-                    value={product.image}
-                    onChange={(e) => handleInputChange(index, e)}
-                    className="w-full"
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="number"
-                    name="quantity"
-                    value={product.quantity}
-                    onChange={(e) => handleInputChange(index, e)}
-                    className="w-full"
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="number"
-                    name="rate"
-                    value={product.rate}
-                    onChange={(e) => handleInputChange(index, e)}
-                    className="w-full"
-                  />
-                </td>
-                <td className="border px-4 py-2">{product.total}</td>
-                <td className="border px-4 py-2">
-                  <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                    onClick={() => deleteProduct(index)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="mt-4 flex justify-between">
-        <Button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
-          onClick={addProduct}
-        >
-          Add Item
-        </Button>
-        <div className="mr-8">
-          <p>Grand Total: {calculateGrandTotal()}</p>
-          <p>
-            Paid Amount:
-            <input
-              type="number"
-              value={paidAmount}
-              onChange={(e) => setPaidAmount(parseInt(e.target.value))}
-              className="ml-2"
-            />
-          </p>
-          <p>Due: {calculateDue()}</p>
+        <div className="flex ml-6 mt-3">
+          <label className="gap-8 flex mt-1 ">
+            Supplier Name:
+            <select
+              className="ml- w- py-2 w-80 rounded border border-l-amber-500"
+              {...register("supplierName")}
+            >
+              <option value="choose Option">choose option </option>
+              {vendors.map((vendor) => (
+                <option value="Salary">{vendor.name}</option>
+              ))}
+            </select>
+          </label>
         </div>
-      </div>
-      <Button
-        className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4"
-        onClick={handleSave}
-        type="submit"
-      >
-        Save
-      </Button>
+        <div className="flex  md:gap-5 gap-10 mt-4 mb-10">
+          <h1 className="md:ml-4 w-32">Date:</h1>
+          <Input
+            type="date"
+            placeholder="date"
+            className="md:w-80"
+            {...register("date")}
+          />
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">SN</th>
+                <th className="px-4 py-2">Product Name</th>
+                <th className="px-4 py-2">image</th>
+                <th className="px-4 py-2">Quantity</th>
+                <th className="px-4 py-2">Rate</th>
+                <th className="px-4 py-2">Total</th>
+                <th className="px-4 py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fields.map((_, index) => (
+                <tr key={index}>
+                  <td className="border px-4 py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="text"
+                      // {...register("ProductName")}
+                      {...register(`product.${index}.productName`)}
+                      className="w-full"
+                    />
+                  </td>
+                  {/* <td className="border px-4 py-2">
+                    <input
+                      type="file"
+                      {...register(`product.${index}.image`)}
+                      className="w-full"
+                    />
+                  </td> */}
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      {...register(`product.${index}.quantity`)}
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      // {...register("rate")}
+                      {...register(`product.${index}.rate`)}
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border px-4 py-2">{12222222}</td>
+                  <td className="border px-4 py-2">
+                    <div className="flex gap-4 justify-center items-center">
+                      <Button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
+                        onClick={() => {
+                          addProduct({
+                            productName: "",
+                            quantity: 0,
+                            rate: 0,
+                            total: 0,
+                            image: "",
+                          });
+                        }}
+                      >
+                        Add Item
+                      </Button>
+
+                      {fields.length > 1 ? (
+                        <button
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                          // onClick={() => deleteProduct(index)}
+                          onClick={() => removeProduct(index)}
+                        >
+                          Delete
+                        </button>
+                      ) : null}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-4 flex justify-between">
+          {/* <Button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
+            onClick={()=>{
+              createProduct({})
+            }}
+          >
+            Add Item
+          </Button> */}
+          <div className="mr-8">
+            <p>Grand Total: {}</p>
+            <p>
+              Paid Amount:
+              <input
+                type="number"
+                value={paidAmount}
+                onChange={(e) => setPaidAmount(parseInt(e.target.value))}
+                className="ml-2"
+              />
+            </p>
+            <p>Due: {}</p>
+          </div>
+        </div>
+        <Button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4"
+          type="submit"
+        >
+          Save
+        </Button>
       </form>
     </div>
   );
