@@ -131,7 +131,7 @@ const PurchaseBill: React.FC = () => {
                 <tr key={index}>
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">
-                    <input
+                    <Input
                       type="text"
                       // {...register("ProductName")}
                       {...register(`product.${index}.productName`)}
@@ -146,14 +146,14 @@ const PurchaseBill: React.FC = () => {
                     />
                   </td>
                   <td className="border px-4 py-2">
-                    <input
+                    <Input
                       type="number"
                       {...register(`product.${index}.quantity`)}
                       className="w-full"
                     />
                   </td>
                   <td className="border px-4 py-2">
-                    <input
+                    <Input
                       type="number"
                       // {...register("rate")}
                       {...register(`product.${index}.rate`)}
@@ -207,7 +207,7 @@ const PurchaseBill: React.FC = () => {
             <p>Grand Total: {}</p>
             <p>
               Paid Amount:
-              <input
+              <Input
                 type="number"
                 value={paidAmount}
                 onChange={(e) => setPaidAmount(parseInt(e.target.value))}
