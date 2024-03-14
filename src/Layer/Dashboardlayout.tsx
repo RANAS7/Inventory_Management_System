@@ -36,7 +36,7 @@ const DashboardLayout = () => {
         >
           <Feature />
         </div>
-        <div className="md:w-[85%] bg-violet-300  ">
+        <div className="md:w-[85%] bg-gray-200  ">
           <main>
             <div className="bg-Indigo-200 w-[100%]  h-16 flex flex-wrap md:justify-between shadow-lg gap-10 ">
               <span

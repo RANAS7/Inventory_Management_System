@@ -138,13 +138,13 @@ const PurchaseBill: React.FC = () => {
                       className="w-full"
                     />
                   </td>
-                  {/* <td className="border px-4 py-2">
+                  <td className="border px-4 py-2">
                     <input
                       type="file"
                       {...register(`product.${index}.image`)}
                       className="w-full"
                     />
-                  </td> */}
+                  </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
