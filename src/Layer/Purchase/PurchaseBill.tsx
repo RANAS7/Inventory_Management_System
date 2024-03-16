@@ -17,8 +17,18 @@ interface Vendor {
 const PurchaseBill: React.FC = () => {
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const { register, handleSubmit, control } = useForm({
+    defaultValues: {
+      supplierName: "",
+      date: "",
+      product: [{ productName: "", quantity: 0, rate: 0, image: [] }],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "product",
+  });
 
-  // get supplier
   useEffect(() => {
     axiosInstance
       .get("http://localhost:8080/get-vendors")
@@ -31,52 +41,75 @@ const PurchaseBill: React.FC = () => {
       });
   }, []);
 
-  interface Product {
-    productName: string;
-    quantity: number;
-    rate: number;
-    total: number;
-    image: string;
-  }
-  interface IForm {
-    supplierName: string;
-    date: string;
-    product: Product[];
-  }
+  // const onSubmit = async (data: any) => {
 
-  const createProduct = async (data: IForm) => {
-    const response = await axiosInstance.post("/addProduct", data);
-    return response.data;
+  //   console.log("Form data:", data);
+  //   try {
+  //     // const formDataArray: FormData[] = [];
+
+  //     // fields.forEach((product: any, index: number) => {
+  //       const formData = new FormData();
+
+  //       // Append regular form fields
+  //       formData.append("supplierName", data.supplierName);
+  //       formData.append("date", data.date);
+
+  //       // Append product data
+  //       // formData.append(`product[${index}].productName`, product.productName);
+  //       // formData.append(`product[${index}].quantity`, product.quantity);
+  //       // formData.append(`product[${index}].rate`, product.rate);
+
+  //       // Append image if it exists
+  //       // if (product.image.length > 0) {
+  //       //   // If you're allowing multiple images per product, you need to loop through them
+  //       //   for (let i = 0; i < product.image.length; i++) {
+  //       //     formData.append(`product[${index}].images`, product.image[i]);
+  //       //   }
+  //       }
+
+  // //       formDataArray.push(formData);
+  // //     });
+
+  // //     // Submit each FormData object individually
+  // //     for (const formData of formDataArray) {
+  // //       const response = await axiosInstance.post("/addProduct", formData);
+  // //       console.log("Response:", response.data);
+  // //     }
+  // //   } catch (error) {
+  // //     console.error("Error submitting form:", error);
+  // //     // Handle error
+  // //   }
+  // // };
+
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+
+    // Append regular form fields
+    formData.append("supplierName", data.supplierName);
+    formData.append("date", data.date);
+
+    // Append product data
+    fields.forEach((product: any, index: number) => {
+      console.log(product);
+      formData.append(`product[${index}].productName`, product.productName);
+      formData.append(`product[${index}].quantity`, product.quantity);
+      formData.append(`product[${index}].rate`, product.rate);
+
+      formData.append(`product[${index}].image`, product.image[0]);
+    });
+
+    // Submit FormData
+    try {
+      const response = await axiosInstance.post("/addProduct", formData);
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle error
+    }
   };
 
-  const { register, handleSubmit, watch, control } = useForm<IForm>({
-    defaultValues: {
-      product: [
-        {
-          productName: "",
-          quantity: 0,
-          rate: 0,
-          total: 0,
-          image: "",
-        },
-      ],
-    },
-  });
-
-  const {
-    append: addProduct,
-    remove: removeProduct,
-    fields,
-  } = useFieldArray({
-    name: "product",
-    control,
-  });
-
-
-  console.log('foem data',watch("product"))
-  const onSubmit = async (data: IForm) => {
-    console.log('data ,',data)
-    console.log("purchase successfully");
+  const handleClick = () => {
+    append({ productName: "", quantity: 0, rate: 0, image: [] });
   };
 
   return (
@@ -97,14 +130,16 @@ const PurchaseBill: React.FC = () => {
               className="ml- w- py-2 w-80 rounded border border-l-amber-500"
               {...register("supplierName")}
             >
-              <option value="choose Option">choose option </option>
+              <option value="">Choose option</option>
               {vendors.map((vendor) => (
-                <option value="Salary">{vendor.name}</option>
+                <option key={vendor.id} value={vendor.id}>
+                  {vendor.name}
+                </option>
               ))}
             </select>
           </label>
         </div>
-        <div className="flex  md:gap-5 gap-10 mt-4 mb-10">
+        <div className="flex md:gap-5 gap-10 mt-4 mb-10">
           <h1 className="md:ml-4 w-32">Date:</h1>
           <Input
             type="date"
@@ -119,7 +154,7 @@ const PurchaseBill: React.FC = () => {
               <tr>
                 <th className="px-4 py-2">SN</th>
                 <th className="px-4 py-2">Product Name</th>
-                <th className="px-4 py-2">image</th>
+                <th className="px-4 py-2">Image</th>
                 <th className="px-4 py-2">Quantity</th>
                 <th className="px-4 py-2">Rate</th>
                 <th className="px-4 py-2">Total</th>
@@ -127,13 +162,12 @@ const PurchaseBill: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {fields.map((_, index) => (
+              {fields.map((_item, index) => (
                 <tr key={index}>
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">
                     <input
                       type="text"
-                      // {...register("ProductName")}
                       {...register(`product.${index}.productName`)}
                       className="w-full"
                     />
@@ -141,8 +175,8 @@ const PurchaseBill: React.FC = () => {
                   <td className="border px-4 py-2">
                     <input
                       type="file"
-                      {...register(`product.${index}.image`)}
                       className="w-full"
+                      {...register(`product.${index}.image`)}
                     />
                   </td>
                   <td className="border px-4 py-2">
@@ -155,38 +189,27 @@ const PurchaseBill: React.FC = () => {
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      // {...register("rate")}
                       {...register(`product.${index}.rate`)}
                       className="w-full"
                     />
                   </td>
-                  <td className="border px-4 py-2">{12222222}</td>
+                  <td className="border px-4 py-2">{}</td>
                   <td className="border px-4 py-2">
                     <div className="flex gap-4 justify-center items-center">
                       <Button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
-                        onClick={() => {
-                          addProduct({
-                            productName: "",
-                            quantity: 0,
-                            rate: 0,
-                            total: 0,
-                            image: "",
-                          });
-                        }}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded mb-4"
+                        onClick={handleClick}
                       >
                         Add Item
                       </Button>
-
-                      {fields.length > 1 ? (
+                      {fields.length > 1 && (
                         <button
                           className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                          // onClick={() => deleteProduct(index)}
-                          onClick={() => removeProduct(index)}
+                          onClick={() => remove(index)}
                         >
                           Delete
                         </button>
-                      ) : null}
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -195,14 +218,6 @@ const PurchaseBill: React.FC = () => {
           </table>
         </div>
         <div className="mt-4 flex justify-between">
-          {/* <Button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
-            onClick={()=>{
-              createProduct({})
-            }}
-          >
-            Add Item
-          </Button> */}
           <div className="mr-8">
             <p>Grand Total: {}</p>
             <p>
@@ -218,7 +233,7 @@ const PurchaseBill: React.FC = () => {
           </div>
         </div>
         <Button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold rounded mt-4"
           type="submit"
         >
           Save
