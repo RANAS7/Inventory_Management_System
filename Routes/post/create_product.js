@@ -3,20 +3,24 @@ const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const path = require("path");
 const multer = require("multer");
+
 const prisma = new PrismaClient();
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
+  destination: (req, file, cb) => {
     cb(null, "Public/Images");
   },
-  filename: (_req, file, cb) => {
-    cb(null, Date.now() + "_" + path.extname(file.originalname)); // Use the original filename
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + "_" + path.extname(file.originalname)
+    );
   },
 });
 
 const upload = multer({ storage: storage });
 
-router.post("/addProduct", upload.single("images"), async (req, res) => {
+router.post("/addProduct", upload.array("images"), async (req, res) => {
   try {
     let date;
 
@@ -31,13 +35,13 @@ router.post("/addProduct", upload.single("images"), async (req, res) => {
       date = new Date();
     }
     // Check if files were uploaded
-    if (!req.file) {
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "File upload failed" });
     }
 
     // Parse form data
     const { productName, selectedSupplier, quantity, total, price } = req.body;
-    const images = req.file.filename
+    const images = req.files
       ? req.files.map((file) => file.filename).join(",")
       : "";
 
@@ -48,7 +52,7 @@ router.post("/addProduct", upload.single("images"), async (req, res) => {
         quantity: parseInt(quantity),
         price: parseFloat(price),
         date: date,
-        image: images,
+        Image: images,
         total: parseFloat(total), // Assuming 'images' is a field in your products table
       },
     });
