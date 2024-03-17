@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/addProduct", upload.array("images"), async (req, res) => {
+router.post("/addProduct", upload.array("image"), async (req, res) => {
   try {
     let date;
 
@@ -40,28 +40,40 @@ router.post("/addProduct", upload.array("images"), async (req, res) => {
     }
 
     // Parse form data
-    const { productName, selectedSupplier, quantity, total, price } = req.body;
-    const images = req.files
-      ? req.files.map((file) => file.filename).join(",")
-      : "";
+    const { supplierName } = req.body;
+    const products = [];
 
-    const newProduct = await prisma.products.create({
-      data: {
-        supplier_id: parseInt(selectedSupplier),
+    req.body.products.forEach((product) => {
+      const { productName, quantity, rate } = product;
+      const image = req.files
+        ? req.files.map((file) => file.filename).join(",")
+        : "";
+
+      products.push({
+        supplier_id: parseInt(supplierName),
         product: productName,
         quantity: parseInt(quantity),
-        price: parseFloat(price),
+        price: parseFloat(rate),
         date: date,
-        Image: images,
-        total: parseFloat(total), // Assuming 'images' is a field in your products table
-      },
+        Image: image,
+      });
     });
+
+    // Insert each product along with supplierName and date into the database as separate rows
+    const newProducts = await Promise.all(
+      products.map(async (product) => {
+        return prisma.products.create({
+          data: product,
+        });
+      })
+    );
+
     res.json({
-      message: "New product added successfully",
-      product: newProduct,
+      message: "New products added successfully",
+      products: newProducts,
     });
   } catch (error) {
-    console.error("Error handling product:", error);
+    console.error("Error handling products:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

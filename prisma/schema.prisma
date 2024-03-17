@@ -35,11 +35,10 @@ model products {
   id          Int       @id @default(autoincrement())
   date        DateTime? @default(now()) @db.DateTime(0)
   supplier_id Int?
-  Image       String?   @db.Text
+  image       String?   @db.Text
   product     String?   @db.VarChar(150)
   quantity    Int?
   price       Decimal?  @db.Decimal(10, 2)
-  total       Decimal?  @db.Decimal(10, 2)
   vendor      vendor?   @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
   sales       sales[]
 

@@ -26,11 +26,10 @@ CREATE TABLE `products` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `date` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `supplier_id` INTEGER NULL,
-    `Image` TEXT NULL,
+    `image` TEXT NULL,
     `product` VARCHAR(150) NULL,
     `quantity` INTEGER NULL,
     `price` DECIMAL(10, 2) NULL,
-    `total` DECIMAL(10, 2) NULL,
 
     INDEX `supplier_id`(`supplier_id`),
     PRIMARY KEY (`id`)
