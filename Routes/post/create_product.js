@@ -35,59 +35,56 @@ const upload = multer({
   },
 });
 
-router.post(
-  "/addProduct",
-  upload.array("product.${index}.image"),
-  async (req, res) => {
-    try {
-      let date;
+router.post("/addProduct", upload.array("image"), async (req, res) => {
+  try {
+    let date;
 
-      if (req.body.date) {
-        // If date is provided in the reque st, use it
-        date = new Date(req.body.date);
-        if (isNaN(date.getTime())) {
-          throw new Error("Invalid date format");
-        }
-      } else {
-        // If date is not provided, use the current date as the default
-        date = new Date();
+    if (req.body.date) {
+      // If date is provided in the request, use it
+      date = new Date(req.body.date);
+      if (isNaN(date.getTime())) {
+        throw new Error("Invalid date format");
       }
-
-      // Check if files were uploaded
-      if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ message: "File upload failed" });
-      }
-
-      // Parse form data
-      const { supplierName, product } = req.body;
-
-      // Insert each product along with supplierName and date into the database as separate rows
-      const newProducts = await Promise.all(
-        product.map(async (item) => {
-          const { productName, quantity, rate } = item;
-          const image = req.files.map((file) => file.filename).join(",");
-          return prisma.products.create({
-            data: {
-              supplier_id: parseInt(supplierName),
-              product: productName,
-              quantity: parseInt(quantity),
-              price: parseFloat(rate),
-              date: date,
-              Image: image,
-            },
-          });
-        })
-      );
-
-      res.json({
-        message: "New products added successfully",
-        products: newProducts,
-      });
-    } catch (error) {
-      console.error("Error handling products:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      // If date is not provided, use the current date as the default
+      date = new Date();
     }
+
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "File upload failed" });
+    }
+
+    // Ensure products data is provided and is an array
+    const { products } = req.body;
+    if (!Array.isArray(products)) {
+      return res.status(400).json({ message: "Products must be an array" });
+    }
+
+    // Parse form data
+    const { supplierName } = req.body;
+    const productsData = products.map((product) => ({
+      supplier_id: parseInt(supplierName),
+      product: product.productName,
+      quantity: parseInt(product.quantity),
+      price: parseFloat(product.rate),
+      date: date,
+      Image: req.files.map((file) => file.filename).join(","),
+    }));
+
+    // Insert products into database
+    const newProducts = await prisma.products.createMany({
+      data: productsData,
+    });
+
+    res.json({
+      message: "New products added successfully",
+      products: newProducts,
+    });
+  } catch (error) {
+    console.error("Error handling products:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-);
+});
 
 module.exports = router;
