@@ -93,7 +93,7 @@ const PurchaseBill: React.FC = () => {
         formDataToSend.append(`productName[${index + 1}]`, item.productName);
         formDataToSend.append(`quantity[${index + 1}]`, String(item.quantity));
         formDataToSend.append(`rate[${index + 1}]`, String(item.rate));
-        formDataToSend.append(`image[${index + 1}]`, item.image[0]);
+        formDataToSend.append(`image`, item.image[0]);
       });
       await axiosInstance.post("/addProduct", formDataToSend);
       console.log("Product added successfully:", formDataToSend);
