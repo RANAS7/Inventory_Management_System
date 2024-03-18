@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/api";
 import { Input } from "@/components/ui/input";
 
-
-//sadcn Pagination
+// Pagination
 import {
   Pagination,
   PaginationContent,
@@ -15,7 +14,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
 
 interface Vendor {
   id: number;
@@ -26,11 +25,41 @@ interface Vendor {
   address: string;
 }
 
+interface IForm {
+  supplierName: string;
+  date: string;
+  product: {
+    productName: string;
+    quantity: number;
+    rate: number;
+    total: number;
+    image: File | null;
+  }[];
+}
+
 const PurchaseBill: React.FC = () => {
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const { register, handleSubmit, watch, control, setValue } = useForm<IForm>({
+    defaultValues: {
+      supplierName: "",
+      date: "",
+      product: [
+        {
+          productName: "",
+          quantity: 0,
+          rate: 0,
+          total: 0,
+          image: null,
+        },
+      ],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "product",
+  });
 
-  // get supplier
   useEffect(() => {
     axiosInstance
       .get("http://localhost:8080/get-vendors")
@@ -43,52 +72,57 @@ const PurchaseBill: React.FC = () => {
       });
   }, []);
 
-  interface Product {
-    productName: string;
-    quantity: number;
-    rate: number;
-    total: number;
-    image: string;
-  }
-  interface IForm {
-    supplierName: string;
-    date: string;
-    product: Product[];
-  }
-
-  const createProduct = async (data: IForm) => {
-    const response = await axiosInstance.post("/addProduct", data);
-    return response.data;
+  const addProduct = () => {
+    append({
+      productName: "",
+      quantity: 0,
+      rate: 0,
+      total: 0,
+      image: null,
+    });
   };
 
-  const { register, handleSubmit, watch, control } = useForm<IForm>({
-    defaultValues: {
-      product: [
-        {
-          productName: "",
-          quantity: 0,
-          rate: 0,
-          total: 0,
-          image: "",
-        },
-      ],
-    },
-  });
+  const removeProduct = (index: number) => {
+    remove(index);
+  };
 
-  const {
-    append: addProduct,
-    remove: removeProduct,
-    fields,
-  } = useFieldArray({
-    name: "product",
-    control,
-  });
+  const onSubmit = async (data: any) => {
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("supplierName", data.supplierName);
+      formDataToSend.append("date", data.date);
+      data.product.forEach((item: any, index: number) => {
+        formDataToSend.append(
+          `product[${index}][productName]`,
+          item.productName
+        );
+        formDataToSend.append(
+          `product[${index}][quantity]`,
+          String(item.quantity)
+        );
+        formDataToSend.append(`product[${index}][rate]`, String(item.rate));
+        formDataToSend.append(`product[${index}][image]`, item.image || "");
+      });
+      const response = await axiosInstance.post("/addProduct", formDataToSend);
+      console.log("Product added successfully:", response.data);
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+  };
 
+  const calculateTotal = (item: any) => {
+    return item.quantity * item.rate;
+  };
 
-  console.log('foem data',watch("product"))
-  const onSubmit = async (data: IForm) => {
-    console.log('data ,',data)
-    console.log("purchase successfully");
+  const calculateGrandTotal = () => {
+    return watch("product").reduce(
+      (acc: number, item: any) => acc + calculateTotal(item),
+      0
+    );
+  };
+
+  const calculateDue = () => {
+    return calculateGrandTotal() - paidAmount;
   };
 
   return (
@@ -111,7 +145,9 @@ const PurchaseBill: React.FC = () => {
             >
               <option value="choose Option">choose option </option>
               {vendors.map((vendor) => (
-                <option value="Salary">{vendor.name}</option>
+                <option key={vendor.id} value={vendor.name}>
+                  {vendor.name}
+                </option>
               ))}
             </select>
           </label>
@@ -139,13 +175,12 @@ const PurchaseBill: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {fields.map((_, index) => (
+              {fields.map((_item, index) => (
                 <tr key={index}>
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">
                     <Input
                       type="text"
-                      // {...register("ProductName")}
                       {...register(`product.${index}.productName`)}
                       className="w-full"
                     />
@@ -167,33 +202,24 @@ const PurchaseBill: React.FC = () => {
                   <td className="border px-4 py-2">
                     <Input
                       type="number"
-                      // {...register("rate")}
                       {...register(`product.${index}.rate`)}
                       className="w-full"
                     />
                   </td>
-                  <td className="border px-4 py-2">{12222222}</td>
+                  <td className="border px-4 py-2">
+                    {calculateTotal(watch("product")[index])}
+                  </td>
                   <td className="border px-4 py-2">
                     <div className="flex gap-4 justify-center items-center">
                       <Button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
-                        onClick={() => {
-                          addProduct({
-                            productName: "",
-                            quantity: 0,
-                            rate: 0,
-                            total: 0,
-                            image: "",
-                          });
-                        }}
+                        onClick={addProduct}
                       >
                         Add Item
                       </Button>
-
                       {fields.length > 1 ? (
                         <button
                           className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                          // onClick={() => deleteProduct(index)}
                           onClick={() => removeProduct(index)}
                         >
                           Delete
@@ -207,16 +233,8 @@ const PurchaseBill: React.FC = () => {
           </table>
         </div>
         <div className="mt-4 flex justify-end">
-          {/* <Button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
-            onClick={()=>{
-              createProduct({})
-            }}
-          >
-            Add Item
-          </Button> */}
           <div className="mr-8">
-            <p>Grand Total: {}</p>
+            <p>Grand Total: {calculateGrandTotal()}</p>
             <p className="flex">
               Paid Amount:
               <Input
@@ -226,7 +244,7 @@ const PurchaseBill: React.FC = () => {
                 className="ml-2"
               />
             </p>
-            <p>Due: {}</p>
+            <p>Due: {calculateDue()}</p>
           </div>
         </div>
         <Button
@@ -237,29 +255,29 @@ const PurchaseBill: React.FC = () => {
         </Button>
       </form>
       <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#" isActive>
+              2
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">3</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };
