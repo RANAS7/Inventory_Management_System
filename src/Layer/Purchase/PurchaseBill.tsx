@@ -90,19 +90,13 @@ const PurchaseBill: React.FC = () => {
       formDataToSend.append("supplierName", data.supplierName);
       formDataToSend.append("date", data.date);
       data.product.forEach((item: any, index: number) => {
-        formDataToSend.append(
-          `product[${index}][productName]`,
-          item.productName
-        );
-        formDataToSend.append(
-          `product[${index}][quantity]`,
-          String(item.quantity)
-        );
-        formDataToSend.append(`product[${index}][rate]`, String(item.rate));
-        formDataToSend.append(`product[${index}][image]`, item.image[0]);
+        formDataToSend.append(`[productName][${index}]`, item.productName);
+        formDataToSend.append(`quantity[${index}]`, String(item.quantity));
+        formDataToSend.append(`rate[${index}]`, String(item.rate));
+        formDataToSend.append(`image[${index}]`, item.image[0]);
       });
-      const response = await axiosInstance.post("/addProduct", formDataToSend);
-      console.log("Product added successfully:", response.data);
+      await axiosInstance.post("/addProduct", formDataToSend);
+      console.log("Product added successfully:", formDataToSend);
       alert("Product Successfully Submitted");
     } catch (error) {
       console.error("Error adding product:", error);
