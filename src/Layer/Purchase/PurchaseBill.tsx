@@ -4,8 +4,6 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/api";
 import { Input } from "@/components/ui/input";
-
-// Pagination
 import {
   Pagination,
   PaginationContent,
@@ -26,7 +24,7 @@ interface Vendor {
 }
 
 interface IForm {
-  supplierName: string;
+  supplierName: number;
   date: string;
   product: {
     productName: string;
@@ -40,9 +38,9 @@ interface IForm {
 const PurchaseBill: React.FC = () => {
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  const { register, handleSubmit, watch, control, setValue } = useForm<IForm>({
+  const { register, handleSubmit, watch, control } = useForm<IForm>({
     defaultValues: {
-      supplierName: "",
+      supplierName: 0,
       date: "",
       product: [
         {
@@ -101,10 +99,11 @@ const PurchaseBill: React.FC = () => {
           String(item.quantity)
         );
         formDataToSend.append(`product[${index}][rate]`, String(item.rate));
-        formDataToSend.append(`product[${index}][image]`, item.image || "");
+        formDataToSend.append(`product[${index}][image]`, item.image[0]);
       });
       const response = await axiosInstance.post("/addProduct", formDataToSend);
       console.log("Product added successfully:", response.data);
+      alert("Product Successfully Submitted");
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -145,7 +144,7 @@ const PurchaseBill: React.FC = () => {
             >
               <option value="choose Option">choose option </option>
               {vendors.map((vendor) => (
-                <option key={vendor.id} value={vendor.name}>
+                <option key={vendor.id} value={vendor.id}>
                   {vendor.name}
                 </option>
               ))}
@@ -212,6 +211,7 @@ const PurchaseBill: React.FC = () => {
                   <td className="border px-4 py-2">
                     <div className="flex gap-4 justify-center items-center">
                       <Button
+                        type="button"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
                         onClick={addProduct}
                       >
