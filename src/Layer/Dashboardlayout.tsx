@@ -31,7 +31,7 @@ const DashboardLayout = () => {
       <div className="flex">
         <div
           className={` ${
-            open ? "flex" : ""
+            open ? " inline absolute" : ""
           }flex-shrink-0  bg-gray-800 text-white w-64 h-auto overflow-y-auto`}
         >
           <Feature />
@@ -82,4 +82,3 @@ export default DashboardLayout;
 enum PAYMENT {
   ONLINE = "ONLINE",
 }
-

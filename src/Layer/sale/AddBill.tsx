@@ -5,6 +5,17 @@ import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/api";
 import { Input } from "@/components/ui/input";
 
+//sadcn Pagination
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+
 interface Product {
   sn: number;
   name: string;
@@ -137,7 +148,7 @@ const AddBill: React.FC = () => {
           />
         </div>
         <div className="overflow-x-auto">
-          <table className="table-auto w-full">
+          <table className="md:table-auto w-full overflow-x">
             <thead>
               <tr>
                 <th className="px-4 py-2">SN</th>
@@ -147,7 +158,7 @@ const AddBill: React.FC = () => {
                 <th className="px-4 py-2">Rate</th>
                 <th className="px-4 py-2">Discount</th>
                 <th className="px-4 py-2">Total</th>
-                <th className="px-4 py-2">Payment Type</th>
+                {/* <th className="px-4 py-2">Payment Type</th> */}
                 <th className="px-4 py-2">Action</th>
               </tr>
             </thead>
@@ -197,7 +208,7 @@ const AddBill: React.FC = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border px-4 py-2">
+                  {/* <td className="border px-4 py-2">
                     <select
                       name="paymentType"
                       value={product.paymentType}
@@ -211,7 +222,7 @@ const AddBill: React.FC = () => {
                       <option value="Bank Account">Bank Account</option>
                       <option value="Cheque">Cheque</option>
                     </select>
-                  </td>
+                  </td> */}
                   <td className="border px-4 py-2">
                     <div className="flex gap-4 justify-center items-center">
                       <Button
@@ -248,11 +259,11 @@ const AddBill: React.FC = () => {
             </tbody>
           </table>
         </div>
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex justify-end items-end">
           <div className="mr-8">
             <p>Grand Total: {calculateGrandTotal()}</p>
             <p>Total Discount: {calculateTotalDiscount()}</p>
-            <p>
+            <p className="flex">
               Paid Amount:
               <Input
                 type="number"
@@ -277,12 +288,36 @@ const AddBill: React.FC = () => {
           </div>
         </div>
         <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 ml-2 px-4 rounded mt-4"
           type="submit"
         >
           Save
         </button>
       </form>
+      <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">3</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
     </div>
   );
 };

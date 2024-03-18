@@ -5,6 +5,18 @@ import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/api";
 import { Input } from "@/components/ui/input";
 
+
+//sadcn Pagination
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+
 interface Vendor {
   id: number;
   name: string;
@@ -194,7 +206,7 @@ const PurchaseBill: React.FC = () => {
             </tbody>
           </table>
         </div>
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex justify-end">
           {/* <Button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold  rounded mb-4"
             onClick={()=>{
@@ -205,7 +217,7 @@ const PurchaseBill: React.FC = () => {
           </Button> */}
           <div className="mr-8">
             <p>Grand Total: {}</p>
-            <p>
+            <p className="flex">
               Paid Amount:
               <Input
                 type="number"
@@ -218,12 +230,36 @@ const PurchaseBill: React.FC = () => {
           </div>
         </div>
         <Button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold  rounded mt-4 ml-4"
           type="submit"
         >
           Save
         </Button>
       </form>
+      <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">3</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
     </div>
   );
 };
