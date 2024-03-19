@@ -36,7 +36,6 @@ const upload = multer({
 });
 
 router.post("/addProduct", upload.array("image"), async (req, res) => {
-   console.log('hit.....')
   try {
     let date;
 
@@ -51,53 +50,44 @@ router.post("/addProduct", upload.array("image"), async (req, res) => {
       date = new Date();
     }
 
-    console.log('before file upload......')
-
     // Check if files were uploaded
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "File upload failed" });
     }
 
-    // Ensure products data is provided and is an array
-    // const { products } = req.body;
-    console.log('insde his.........')
-    // if (!Array.isArray(products)) {
-    //   return res.status(400).json({ message: "Products must be an array" });
-    // }
+    // Define productsData array to store parsed product data
+    const productsData = [];
 
+    // Parse form data for each product
+    for (let i = 0; i < req.body.productName.length; i++) {
+      const productName = req.body.productName[i];
+      const quantity = parseInt(req.body.quantity[i]);
+      const price = parseFloat(req.body.rate[i]);
+      const image =
+        req.files[i - 1] && req.files[i - 1].filename
+          ? req.files[i - 1].filename
+          : "";
 
-    const products1 = [{
-      supplier_id:"1",
-      productName: "Product 1",
-      quantity: "10",
-      price: "100",
-      date:new Date(),
-      Image: req.files.map((file) => file.filename).join(","),
+      // Only add product if all required fields are present
+      if (productName && !isNaN(quantity) && !isNaN(price)) {
+        const product = {
+          supplier_id: parseInt(req.body.supplierName),
+          product: productName,
+          quantity: quantity,
+          price: price,
+          date: date,
+          image: image,
+        };
 
+        productsData.push(product);
+      }
+    }
 
-
-    }]
-
-    console.log('Nabin file',req.files)
-    // Parse form data
-    const { supplierName } = req.body;
-    const productsData = products1.map((product) => ({
-      supplier_id: parseInt(supplierName) ?? 1,
-      product: product.productName,
-      quantity: parseInt(product.quantity),
-      price: parseFloat(product.rate),
-      date: date,
-      image: req.files.map((file) => file.filename).join(","),
-    }));
-
-    // Insert products into database
-    console.log('befoe inser.....')
+    // Insert products into the database
+    console.log("Before inserting products...");
     const newProducts = await prisma.products.createMany({
       data: productsData,
     });
-
-
-    console.log('after inset.........')
 
     res.json({
       message: "New products added successfully",
