@@ -19,22 +19,13 @@ interface Vendor {
   contact: string;
   contact_person: string;
 }
-
-interface ProductDetail {
-  map(
-    arg0: (productD: any, index: any) => import("react/jsx-runtime").JSX.Element
-  ): React.ReactNode;
-  quantity: number;
-  price: number;
-  available: boolean;
-  vendor: Vendor;
-}
-
 interface Product {
   id: number;
-  Product_Name: string;
-  Images: string;
-  product_detail: ProductDetail;
+  product: string;
+  image: string;
+  quantity: number;
+  price: number;
+  vendor: Vendor;
 }
 export function ProductList() {
   const [purchases, setPurchases] = useState<Product[]>([]);
@@ -110,19 +101,20 @@ export function ProductList() {
                 })()}
               </TableCell>
               <TableCell>Ref No.</TableCell>
-              <TableCell>{purchase.Images}</TableCell>
-              <TableCell>{purchase.Product_Name}</TableCell>
-              {purchase.product_detail.map((productD) => (
-                <React.Fragment key={productD.id}>
-                  <TableCell>{productD.vendor.name}</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>total Amount</TableCell>
-                  <TableCell>{productD.quantity}</TableCell>
-                  <TableCell>{productD.price}</TableCell>
-                  <TableCell>Paid Amount</TableCell>
-                  <TableCell>Due Amount</TableCell>
-                </React.Fragment>
-              ))}
+              <TableCell>
+                <img
+                  src={`http://localhost:8080/images/${purchase.image}`}
+                  alt={purchase.product}
+                  className="mt-2 w-24 h-24"
+                />
+              </TableCell>
+              <TableCell>{purchase.product}</TableCell>
+              <TableCell>{purchase.vendor.name}</TableCell>
+              <TableCell>total Amount</TableCell>
+              <TableCell>{purchase.quantity}</TableCell>
+              <TableCell>{purchase.price}</TableCell>
+              <TableCell>Paid Amount</TableCell>
+              <TableCell>Due Amount</TableCell>
               <TableCell className="text-center">
                 <Button onClick={() => handleDelete(purchase.id)}>
                   Delete
