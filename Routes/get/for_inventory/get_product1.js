@@ -19,12 +19,6 @@ router.get("/get-products", async (req, res) => {
         supplier_id: true,
         quantity: true,
         price: true,
-        vendor: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
       },
     });
 
