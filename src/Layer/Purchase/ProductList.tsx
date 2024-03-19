@@ -10,18 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/lib/api";
-import React from "react";
 import { Button } from "@/components/ui/button";
 
 interface Vendor {
   name: string;
-  email: string;
-  contact: string;
-  contact_person: string;
 }
 interface Product {
   id: number;
   product: string;
+  date: string;
   image: string;
   quantity: number;
   price: number;
@@ -81,9 +78,6 @@ export function ProductList() {
             <TableHead className="text-center">Date</TableHead>
             <TableHead className="text-center">Quantity</TableHead>
             <TableHead className="text-center">Price</TableHead>
-            <TableHead className="text-center">Total Amount</TableHead>
-            <TableHead className="text-center">paid Amount</TableHead>
-            <TableHead className="text-center">Due Amount</TableHead>
             <TableHead className="text-center">Option</TableHead>
           </TableRow>
         </TableHeader>
@@ -110,11 +104,9 @@ export function ProductList() {
               </TableCell>
               <TableCell>{purchase.product}</TableCell>
               <TableCell>{purchase.vendor.name}</TableCell>
-              <TableCell>total Amount</TableCell>
+              <TableCell>{purchase.date}</TableCell>
               <TableCell>{purchase.quantity}</TableCell>
               <TableCell>{purchase.price}</TableCell>
-              <TableCell>Paid Amount</TableCell>
-              <TableCell>Due Amount</TableCell>
               <TableCell className="text-center">
                 <Button onClick={() => handleDelete(purchase.id)}>
                   Delete
