@@ -8,10 +8,10 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, "Public/Images");
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     cb(
       null,
       file.fieldname + "_" + Date.now() + path.extname(file.originalname)

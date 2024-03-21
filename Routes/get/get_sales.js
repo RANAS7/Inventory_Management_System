@@ -9,21 +9,18 @@ router.get("/get-sales", async (req, res) => {
     const productsWithDetails = await prisma.products.findMany({
       select: {
         id: true,
-        Product_Name: true,
-        Images: true,
+        product: true,
+        image: true,
         sales: {
           select: {
             quantity: true,
             price: true,
             total: true,
+            discount: true,
             payment_type: true,
             customer: {
               select: {
                 name: true,
-                email: true,
-                contact: true,
-                address: true,
-                contact_person: true,
               },
             },
           },

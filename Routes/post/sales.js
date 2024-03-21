@@ -4,11 +4,9 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-router.post("/add-sales", async (req, res) => {
+router.post("/addSales", async (req, res) => {
   try {
     let date;
-
-    let total = req.body.quantity * req.body.price;
 
     if (req.body.date) {
       // If date is provided in the request, use it
@@ -21,59 +19,52 @@ router.post("/add-sales", async (req, res) => {
       date = new Date();
     }
 
-    const productId = parseInt(req.body.product_id);
-    const quantity = parseInt(req.body.quantity);
+    // Define productsData array to store parsed product data
+    const salesData = [];
 
-    // Check if product exists
-    const product = await prisma.product_detail.findUnique({
-      where: { id: productId },
-    });
+    // Parse form data for each product
+    for (let i = 0; i < req.body.productName.length; i++) {
+      const inventory_id = req.body.selectedProduct[i];
+      const quantity = parseInt(req.body.quantity[i]);
+      const price = parseFloat(req.body.rate[i]);
+      const discount = parseFloat(req.body.discount[i]);
+      const total = parseInt(req.body.total[i]);
+      const paymentType = req.body.paymentType[i];
 
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      // Only add product if all required fields are present
+      if (productName && !isNaN(quantity) && !isNaN(price)) {
+        const product = {
+          customer_id: parseInt(req.body.selectedCustomer),
+          inventory_id: parseInt(inventory_id),
+          quantity: quantity,
+          price: price,
+          date: date,
+          discount: discount,
+          total: total,
+          paymentType: paymentType,
+        };
+
+        salesData.push(product);
+      }
     }
 
-    // Check if there's enough quantity available
-    if (product.available < quantity) {
-      return res
-        .status(400)
-        .json({ error: "Insufficient quantity of product" });
-    }
-
-    // Update available quantity
-    const updateProduct = await prisma.product_detail.update({
-      where: { id: productId },
-      data: {
-        available: { decrement: quantity },
-      },
+    // Insert products into the database
+    const newProducts = await prisma.products.createMany({
+      data: salesData,
     });
 
-    // Create sales record
-    const salesData = await prisma.sales.create({
-      data: {
-        date: date.toISOString(),
-        company: req.body.company,
-        quantity: quantity,
-        price: parseFloat(req.body.price),
-        product_id: productId,
-        total: total,
-        payment_type: req.body.payment_type,
-      },
+    res.json({
+      message: "New sales added successfully",
+      products: newProducts,
     });
 
-    res
-      .status(200)
-      .json({ message: "Product sold successfully", updateProduct, salesData });
+    await prisma.inventory.findmany({
+      where: { id: pr },
+    });
   } catch (error) {
-    console.error("Error inserting sales with Prisma", error);
+    console.error("Error handling products:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 module.exports = router;
-
-const PAYMENT = {
-  ONLINE: "ONLINE",
-  CASH: "CASH",
-  BANK: "BANK",
-};
