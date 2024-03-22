@@ -30,6 +30,8 @@ const updateProduct = require("./Routes/update/update_product");
 const updateSales = require("./Routes/update/update_sales");
 const updateCustomer = require("./Routes/update/update_customer");
 const dNotice = require("./Routes/delete/d_notice");
+const inventory = require("./Routes/post/create_inventory");
+const getforInventory = require("./Routes/get/for_inventory/getProduct1");
 
 const app = express();
 app.use(express.json());
@@ -64,6 +66,8 @@ app.use(updateProduct);
 app.use(updateSales);
 app.use(updateCustomer);
 app.use(dNotice);
+app.use(inventory);
+app.use(getforInventory);
 
 const PORT = 8080;
 app.listen(PORT, () => {

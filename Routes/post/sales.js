@@ -19,7 +19,7 @@ router.post("/addSales", async (req, res) => {
       date = new Date();
     }
 
-    // Define productsData array to store parsed product data
+    // Define salesData array to store parsed sales data
     const salesData = [];
 
     // Parse form data for each product
@@ -32,7 +32,7 @@ router.post("/addSales", async (req, res) => {
       const paymentType = req.body.paymentType[i];
 
       // Only add product if all required fields are present
-      if (productName && !isNaN(quantity) && !isNaN(price)) {
+      if (inventory_id && !isNaN(quantity) && !isNaN(price)) {
         const product = {
           customer_id: parseInt(req.body.selectedCustomer),
           inventory_id: parseInt(inventory_id),
@@ -48,21 +48,31 @@ router.post("/addSales", async (req, res) => {
       }
     }
 
-    // Insert products into the database
-    const newProducts = await prisma.products.createMany({
+    // Insert sales into the database
+    const newSales = await prisma.sales.createMany({
       data: salesData,
     });
 
+    // Update inventory for each sold product
+    for (const sale of salesData) {
+      const { inventory_id, quantity } = sale;
+
+      await prisma.inventory.update({
+        where: { id: inventory_id },
+        data: {
+          available: {
+            decrement: quantity,
+          },
+        },
+      });
+    }
+
     res.json({
       message: "New sales added successfully",
-      products: newProducts,
-    });
-
-    await prisma.inventory.findmany({
-      where: { id: pr },
+      sales: newSales,
     });
   } catch (error) {
-    console.error("Error handling products:", error);
+    console.error("Error handling sales:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

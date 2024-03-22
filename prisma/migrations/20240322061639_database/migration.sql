@@ -26,11 +26,10 @@ CREATE TABLE `products` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `date` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `supplier_id` INTEGER NULL,
-    `Image` TEXT NULL,
+    `image` TEXT NULL,
     `product` VARCHAR(150) NULL,
     `quantity` INTEGER NULL,
     `price` DECIMAL(10, 2) NULL,
-    `total` DECIMAL(10, 2) NULL,
 
     INDEX `supplier_id`(`supplier_id`),
     PRIMARY KEY (`id`)
@@ -104,11 +103,24 @@ CREATE TABLE `sales` (
     `product_id` INTEGER NULL,
     `quantity` INTEGER NULL,
     `price` DECIMAL(10, 2) NULL,
+    `discount` DECIMAL(6, 2) NULL,
     `total` DECIMAL(10, 2) NULL,
     `payment_type` VARCHAR(100) NULL,
 
     INDEX `customer_id`(`customer_id`),
     INDEX `product_id`(`product_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `inventory` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `image` TEXT NULL,
+    `product` VARCHAR(255) NULL,
+    `available` INTEGER NULL,
+    `price` DECIMAL(10, 2) NULL,
+    `total` DECIMAL(10, 2) NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

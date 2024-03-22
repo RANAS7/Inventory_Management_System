@@ -108,6 +108,7 @@ model sales {
   product_id   Int?
   quantity     Int?
   price        Decimal?  @db.Decimal(10, 2)
+  discount     Decimal?  @db.Decimal(6, 2)
   total        Decimal?  @db.Decimal(10, 2)
   payment_type String?   @db.VarChar(100)
   customer     customer? @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sales_ibfk_1")
@@ -115,4 +116,14 @@ model sales {
 
   @@index([customer_id], map: "customer_id")
   @@index([product_id], map: "product_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model inventory {
+  id        Int      @id @default(autoincrement())
+  image     String?  @db.Text
+  product   String?  @db.VarChar(255)
+  available Int?
+  price     Decimal? @db.Decimal(10, 2)
+  total     Decimal? @db.Decimal(10, 2)
 }

@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Adjusting multer upload fields for the form
 const upload = multer({
   storage: storage,
   fileFilter: (_req, file, cb) => {
@@ -37,18 +36,8 @@ const upload = multer({
 
 router.post("/addProduct", upload.array("image"), async (req, res) => {
   try {
-    let date;
-
-    if (req.body.date) {
-      // If date is provided in the request, use it
-      date = new Date(req.body.date);
-      if (isNaN(date.getTime())) {
-        throw new Error("Invalid date format");
-      }
-    } else {
-      // If date is not provided, use the current date as the default
-      date = new Date();
-    }
+    // Use the current date as default if not provided in the request
+    const date = req.body.date ? new Date(req.body.date) : new Date();
 
     // Check if files were uploaded
     if (!req.files || req.files.length === 0) {

@@ -15,6 +15,7 @@ router.get("/get-products", async (req, res) => {
       select: {
         id: true,
         product: true,
+        date: true,
         image: true,
         supplier_id: true,
         quantity: true,
@@ -28,9 +29,20 @@ router.get("/get-products", async (req, res) => {
       },
     });
 
-    console.log("Products with details:", productData);
+    // Modify the productData to only include the date part
+    const modifiedProductData = productData.map((product) => {
+      // Convert date to a string in YYYY-MM-DD format
+      const formattedDate = product.date.toISOString().split("T")[0];
+      // Return a new object with the formatted date
+      return {
+        ...product,
+        date: formattedDate,
+      };
+    });
 
-    res.json(productData);
+    console.log("Products with details:", modifiedProductData);
+
+    res.json(modifiedProductData);
   } catch (err) {
     console.error("Error fetching products:", err);
     res.status(500).json({ error: "Internal Server Error" });
