@@ -124,6 +124,16 @@ CREATE TABLE `inventory` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `transactions` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `cash` DECIMAL(10, 2) NULL,
+    `cheque` DECIMAL(10, 2) NULL,
+    `bank` DECIMAL(10, 2) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `salary` ADD CONSTRAINT `salary_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 

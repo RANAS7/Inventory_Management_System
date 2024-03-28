@@ -7,39 +7,37 @@ const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
 
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
   try {
     // Using Prisma to find a user by email
-    const userData = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
       where: {
-        Email: req.body.email,
+        email,
       },
     });
 
-    if (userData.length > 0) {
-      // Compare the provided password with the hashed password from the database
-      bcrypt.compare(req.body.password, userData[0].Password, (err, resp) => {
-        if (err) {
-          return res.json({
-            login: false,
-            message: "Error comparing passwords",
-          });
-        }
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
 
-        if (resp) {
-          const id = userData[0].id;
-          const token = jwt.sign({ id }, "jwtSecretKey", { expiresIn: 300 });
-          return res.json({
-            login: true,
-            token,
-            result: userData,
-            message: "Login Successfull",
-          });
-        } else {
-          return res.json({ login: false, message: "Password not matched" });
-        }
+    // Compare the provided password with the hashed password from the database
+    const passwordMatch = bcrypt.compare(password, user.Password);
+
+    if (passwordMatch) {
+      // Passwords match, generate JWT token
+      const token = jwt.sign({ id: user.id }, "jwtSecretKey", {
+        expiresIn: 300,
+      });
+      return res.json({
+        login: true,
+        token,
+        result: user,
+        message: "Login successful",
       });
     } else {
-      return res.json({ login: false, message: "Email not found" });
+      return res
+        .status(401)
+        .json({ login: false, message: "Invalid credentials" });
     }
   } catch (error) {
     console.error("Error finding user with Prisma", error);

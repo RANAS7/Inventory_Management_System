@@ -127,3 +127,10 @@ model inventory {
   price     Decimal? @db.Decimal(10, 2)
   total     Decimal? @db.Decimal(10, 2)
 }
+
+model transactions {
+  id     Int      @id @default(autoincrement())
+  cash   Decimal? @db.Decimal(10, 2)
+  cheque Decimal? @db.Decimal(10, 2)
+  bank   Decimal? @db.Decimal(10, 2)
+}

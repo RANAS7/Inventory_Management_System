@@ -32,10 +32,12 @@ const updateCustomer = require("./Routes/update/update_customer");
 const dNotice = require("./Routes/delete/d_notice");
 const inventory = require("./Routes/post/create_inventory");
 const getforInventory = require("./Routes/get/for_inventory/getProduct1");
+const getTransaction = require("./Routes/get/get_transaction");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 app.use(user);
 app.use(login);
 app.use(createProduct);
@@ -68,6 +70,7 @@ app.use(updateCustomer);
 app.use(dNotice);
 app.use(inventory);
 app.use(getforInventory);
+app.use(getTransaction);
 
 const PORT = 8080;
 app.listen(PORT, () => {
