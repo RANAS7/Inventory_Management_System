@@ -79,9 +79,9 @@ export function ProductList() {
       formData.append("date", updateDate);
       formData.append("quantity", String(updateQuantity));
       formData.append("price", String(updatePrice));
-      if (updateImage) {
-        formData.append("productImg", updateImage);
-      }
+
+      formData.append("productImg", updateImage);
+
       await axiosInstance.put(`/update-product/${editId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
